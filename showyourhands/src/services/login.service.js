@@ -7,11 +7,12 @@ async function responseLogin(id, password) {
         WHERE user_login_id = $1;
     `;
     let result = null;
-    connection.query(query, [id])
+
+    await connection.query(query, [id])
         .then(r => {
             let row = r.rows[0];
-            console.log(row);
             if (row.user_password === password) {
+                console.log(row);
                 result = {
                     status: 200,
                     message: "login success",
