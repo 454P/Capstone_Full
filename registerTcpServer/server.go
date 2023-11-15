@@ -74,11 +74,7 @@ func main() {
 			n, err := conn.Read(tmp_buff)
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
-				if err == io.EOF {
-					read_complete = true
-				} else {
-					continue
-				}
+				continue
 			}
 			fmt.Println("Read", n, "bytes")
 			// if packet is "0000000000", then break
