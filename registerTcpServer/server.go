@@ -42,18 +42,11 @@ func main() {
 			fmt.Println("Fail to accept client: ", err)
 			continue
 		}
-
-		buf := make([]byte, 1024)
-		n, err := conn.Read(buf)
+		decoder := json.NewDecoder(conn)
+		var jsonFile User
+		err = decoder.Decode(&jsonFile)
 		if err != nil {
 			fmt.Println("Fail to read from client: ", err)
-			continue
-		}
-
-		jsonFile := User{}
-		err = json.Unmarshal(buf[:n], &jsonFile)
-		if err != nil {
-			fmt.Println("Fail to parse json: ", err)
 			continue
 		}
 
