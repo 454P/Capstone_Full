@@ -67,29 +67,39 @@ func main() {
 			fmt.Println("Fail to accept client: ", err)
 			continue
 		}
-		tmp_buff := make([]byte, 1024)
-		var data_buff []byte
-		var read_complete bool
+		fmt.Println("Accept: ", conn.RemoteAddr())
+		// read packet until "0000000000"
+		tmpBuff := make([]byte, 1024)
+		var dataBuff []byte
+		var readComplete bool
 		for {
-			n, err := conn.Read(tmp_buff)
+			n, err := conn.Read(tmpBuff)
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
-				continue
+				if err == io.EOF {
+					fmt.Println("Connection closed from client side: ", conn.RemoteAddr())
+					_ = conn.Close()
+					return
+
+				} else {
+					continue
+				}
 			}
-			fmt.Println("Read", n, "bytes")
+
+			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
-			if n == 10 && string(tmp_buff) == "0000000000" {
+			if n == 10 && string(tmpBuff) == "0000000000" {
 				break
 			}
-			data_buff = append(data_buff, tmp_buff[:n]...)
+			dataBuff = append(dataBuff, tmpBuff[:n]...)
 
-			if read_complete {
+			if readComplete {
 				break
 			}
 		}
-
+		// unmarshal json
 		jsonFile := User{}
-		err = json.Unmarshal(data_buff, &jsonFile)
+		err = json.Unmarshal(dataBuff, &jsonFile)
 		if err != nil {
 			fmt.Println("Fail to unmarshal json: ", err)
 			continue
