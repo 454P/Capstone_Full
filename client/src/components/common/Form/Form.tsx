@@ -11,7 +11,7 @@ function Form({ children, ...restProps }: Props) {
 export default Form;
 
 const StyledForm = styled.form`
-  ${({ theme }) => theme.typography.Bold36}
+  ${({ theme }) => theme.typography.Bold20}
   color: ${({ theme }) => theme.colors.gray1};
   background-image: url(${formImg});
   background-size: contain;

@@ -1,10 +1,16 @@
 import { ChangeEventHandler, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { socketState } from '@/states';
+import axios, { AxiosError } from 'axios';
+import { useRecoilState } from 'recoil';
 import { Button, Flex, Form, Input } from '@/components/common';
 import { HomeTemplate } from '@/components/home';
 
 function LoginPage() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [socket, setSocket] = useRecoilState(socketState);
 
   const handleChangeID: ChangeEventHandler<HTMLInputElement> = (e) => {
     setId(e.target.value);
@@ -15,9 +21,43 @@ function LoginPage() {
 
   const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(id, password);
+    login();
   };
 
+  const initForm = () => {
+    setId('');
+    setPassword('');
+  };
+
+  const changeNickname = async (nickname: string) => {
+    setSocket((old) => {
+      const newSocket = { ...old, nickname: nickname };
+      return newSocket;
+    });
+  };
+
+  async function login() {
+    try {
+      const response = await axios.post('http://49.142.76.124:8000/login', {
+        id: id,
+        password: password,
+      });
+      console.log(response);
+      if (response.data.status === 200) {
+        await changeNickname(response.data.data.nickname);
+        navigate('/town');
+      } else if (response.status === 204) {
+        alert('없는 아이디입니다!');
+        initForm();
+      }
+    } catch (error) {
+      const { response } = error as unknown as AxiosError;
+      if (response?.status === 401) {
+        alert('비밀번호가 틀렸습니다!');
+        initForm();
+      }
+    }
+  }
   return (
     <HomeTemplate>
       <Form onSubmit={handleSubmitForm}>

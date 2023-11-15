@@ -8,7 +8,7 @@ interface Props extends ComponentProps<'input'> {
 
 function Input({ name, ...restProps }: Props) {
   return (
-    <Flex gap={20} justifyContent='flex-end'>
+    <Flex gap={20} justifyContent='flex-end' alignItems='center'>
       {name}
       <InputContainer name={name} {...restProps} />
     </Flex>
@@ -23,7 +23,7 @@ const InputContainer = styled.input`
   color: ${({ theme }) => theme.colors.gray2};
 
   width: 280px;
-  height: 40px;
+  height: 35px;
   border: none;
   border-radius: 5px;
   padding: 0 20px 0 20px;
