@@ -55,6 +55,41 @@ paths:
         "401":
           description: login failed
       x-swagger-router-controller: Query
+  /signup:
+    get:
+      tags:
+        - front
+      summary: shows signup page
+      description: shows signup page
+      operationId: getSignupPage
+      responses:
+        "200":
+          description: Signup page updated
+        "400":
+          description: cannot load Signup page
+      x-swagger-router-controller: Front
+    post:
+      tags:
+        - query
+      summary: signup attempt
+      description: insert id pw in db
+      operationId: signupRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupProfile'
+        description: signup profile
+        required: true
+      responses:
+        "201":
+          description: item created, return to login screen
+        "400":
+          description: server dead
+        "401":
+          description: signup failed
+      x-swagger-router-controller: Query
+
 components:
   schemas:
     SignupProfile:
@@ -87,14 +122,14 @@ components:
         - password
       type: object
       properties:
-          id:
-            type: string
-            format: VARCHAR(255)
-            example: asap0123
-          password:
-            type: string
-            format: VARCHAR(255)
-            example: asap0123!
+        id:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123
+        password:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123!
     LoginToken:
       required:
         - nickname
