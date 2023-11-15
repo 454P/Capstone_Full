@@ -23,7 +23,11 @@ func connection(conn net.Conn) {
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
 				if err == io.EOF {
-					readComplete = true
+					fmt.Println("Connection closed from client side: ", conn.RemoteAddr())
+					err := conn.Close()
+					if err != nil {
+						return
+					}
 				} else {
 					continue
 				}
@@ -77,7 +81,6 @@ func main() {
 					continue
 				}
 			}
-
 			fmt.Println("Read", n, "bytes")
 			// if packet is "0000000000", then break
 			if n == 10 && string(tmp_buff) == "0000000000" {
