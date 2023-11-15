@@ -77,10 +77,7 @@ func main() {
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
 				if err == io.EOF {
-					fmt.Println("Connection closed from client side: ", conn.RemoteAddr())
-					_ = conn.Close()
-					return
-
+					continue
 				} else {
 					continue
 				}
