@@ -1,4 +1,5 @@
 const connection = require('../config/db.config');
+const jwt = require('../modules/jwt.module');
 
 async function responseLogin(id, password) {
     const query = `
@@ -12,13 +13,14 @@ async function responseLogin(id, password) {
         .then(r => {
             let row = r.rows[0];
             if (row.user_password === password) {
-                console.log(row);
+                const token = jwt.signupToken(row.user_id, row.user_login_id, row.user_email);
                 result = {
                     status: 200,
                     message: "login success",
                     data: {
                         id: row.user_id,
-                        nickname: row.user_name
+                        nickname: row.user_name,
+                        token: token.token,
                     }
                 }
             }

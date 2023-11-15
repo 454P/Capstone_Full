@@ -5,20 +5,21 @@ async function responseSignup(id, password, nickname, email){
         VALUES ($1, $2, $3, $4);
     `;
     let result = null;
-    return connection.query(query, [id, password, nickname, email])
+    await connection.query(query, [id, password, nickname, email])
         .then(r => {
             console.log(r);
-            return {
+            result = {
                 status: 200,
                 message: "signup success"
             }
         }).catch(e => {
             console.log(e);
-            return {
+            result = {
                 status: 401,
                 message: "signup failed"
             }
         });
+    return result;
 }
 
 module.exports = {
