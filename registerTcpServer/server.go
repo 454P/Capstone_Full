@@ -15,15 +15,15 @@ type User struct {
 func connection(conn net.Conn) {
 	// try to read
 	for {
-		tmp_buff := make([]byte, 1024)
-		var data_buff []byte
-		var read_complete bool
+		tmpBuff := make([]byte, 1024)
+		var dataBuff []byte
+		var readComplete bool
 		for {
-			n, err := conn.Read(tmp_buff)
+			n, err := conn.Read(tmpBuff)
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
 				if err == io.EOF {
-					read_complete = true
+					readComplete = true
 				} else {
 					continue
 				}
@@ -31,15 +31,16 @@ func connection(conn net.Conn) {
 
 			fmt.Println("Read", n, "bytes")
 			// if packet is "0000000000", then break
-			if n == 10 && string(tmp_buff) == "0000000000" {
+			if n == 10 && string(tmpBuff) == "0000000000" {
 				break
 			}
-			data_buff = append(data_buff, tmp_buff[:n]...)
+			dataBuff = append(dataBuff, tmpBuff[:n]...)
 
-			if read_complete {
+			if readComplete {
 				break
 			}
 		}
+		packet := dataBuff
 		fmt.Println("Read: ", string(packet))
 	}
 }
