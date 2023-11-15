@@ -10,10 +10,10 @@ async function responseLogin(id, password) {
     let result = null;
 
     await connection.query(query, [id])
-        .then(r => {
+        .then(async r => {
             let row = r.rows[0];
             if (row.user_password === password) {
-                const token = jwt.signupToken(row.user_id, row.user_login_id, row.user_email);
+                const token = await jwt.signupToken(row.user_id, row.user_login_id, row.user_email);
                 result = {
                     status: 200,
                     message: "login success",
