@@ -1,16 +1,17 @@
 {
-  "name": "route_check",
+  "name": "showyourhands",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple app to show your hands",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
-  "author": "",
+  "author": "kzrt",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "nodemon": "^1.17.3"
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.10"
   }
 }
