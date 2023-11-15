@@ -12,9 +12,9 @@ const syhRouter = require('./src/routes/syh.route');
 const configs = require('./src/config/general.config');
 
 app.use(cors(configs.corsOptions));
-app.use('/', syhRouter);
 app.use(express.json());
 app.use(express.urlencoded( {extended : false } ));
+app.use('/', syhRouter);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
