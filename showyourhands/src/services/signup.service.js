@@ -4,6 +4,7 @@ async function responseSignup(id, password, nickname, email){
         INSERT INTO capstone."user" (user_login_id, user_password, user_name, user_email)
         VALUES ($1, $2, $3, $4);
     `;
+    let result = null;
     return connection.query(query, [id, password, nickname, email])
         .then(r => {
             console.log(r);
