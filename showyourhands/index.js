@@ -1,6 +1,7 @@
-require('dotenv').config();
+require('dotenv').config({path: './config/.env'});
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser')
 // simple express server
 const port = process.env.PORT || 8000;
 const app = express();
@@ -12,6 +13,8 @@ const configs = require('./src/config/general.config');
 
 app.use(cors(configs.corsOptions));
 app.use('/', syhRouter);
+app.use(express.json());
+app.use(express.urlencoded( {extended : false } ));
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
