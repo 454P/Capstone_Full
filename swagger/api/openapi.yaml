@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Simple Inventory API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/KZRT0123_1/showyourhands/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /login:
+    get:
+      tags:
+      - front
+      summary: shows login page
+      description: shows login page
+      operationId: getLoginPage
+      responses:
+        "200":
+          description: login page updated
+        "400":
+          description: cannot load login page
+      x-swagger-router-controller: Front
+    post:
+      tags:
+      - query
+      summary: login attempt
+      description: Adds an item to the system
+      operationId: loginPOST
+      requestBody:
+        description: Inventory item to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        "201":
+          description: item created
+        "400":
+          description: "invalid input, object invalid"
+        "409":
+          description: an existing item already exists
+      x-swagger-router-controller: Query
+components:
+  schemas:
+    SignupProfile:
+      required:
+      - email
+      - id
+      - nickname
+      - password
+      type: object
+      properties:
+        id:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123
+        password:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123!
+        nickname:
+          type: string
+          format: VARCHAR(20)
+          example: asap
+        email:
+          type: string
+          format: "VARCHAR(255), !do not check at the backend!"
+          example: asap@asap.com
