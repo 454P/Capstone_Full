@@ -10,6 +10,7 @@ async function responseLogin(id, password) {
     connection.query(query, [id])
         .then(r => {
             let row = r.rows[0];
+            console.log(row);
             if (row.user_password === password) {
                 result = {
                     status: 200,
