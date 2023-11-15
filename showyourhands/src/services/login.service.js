@@ -1,4 +1,4 @@
-const connection = require('../database/connection');
+const connection = require('../config/db.config');
 
 async function responseLogin(id, password) {
     const query = `
