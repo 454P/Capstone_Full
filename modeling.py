@@ -10,10 +10,18 @@ from tensorflow.keras.callbacks import TensorBoard
 from sklearn.preprocessing import LabelEncoder
 import joblib
 import time, io, os, time, sys, natsort, random, math
+import json
 
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 mp_face_mesh = mp.solutions.face_mesh
+
+def make_numpy(keypoints):
+    key_np_list = []
+    keypoint_list = json.loads(keypoints)
+    for k in keypoint_list:
+        key_np_list.append(np.array(k))
+    return np.expand_dims(key_np_list, axis=0)
 
 def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
