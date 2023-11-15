@@ -18,7 +18,7 @@ async function responseLogin(id, password) {
                     message: "login failed due to wrong id"
                 }
             }
-            else if (row.user_password === password) {
+            else if (await jwt.comparePassword(password, row.user_password)) {
                 const token = await jwt.signupToken(row.user_id, row.user_login_id, row.user_email);
                 result = {
                     status: 200,

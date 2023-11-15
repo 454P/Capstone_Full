@@ -2,6 +2,7 @@ const randToken = require('rand-token');
 const jwt = require('jsonwebtoken');
 const secretKey = require('../config/jwt.config').secret;
 const options = require('../config/jwt.config').options;
+const bcrypt = require('bcrypt');
 
 const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
@@ -37,7 +38,18 @@ async function verifyToken(token) {
     return decoded;
 }
 
+async function hashPassword(password) {
+    const saltRounds = 10;
+    return await bcrypt.hash(password, saltRounds);
+}
+
+async function comparePassword(password, hash) {
+    return await bcrypt.compare(password, hash);
+}
+
 module.exports = {
     signupToken,
-    verifyToken
+    verifyToken,
+    hashPassword,
+    comparePassword
 }
