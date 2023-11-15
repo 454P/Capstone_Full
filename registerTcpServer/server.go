@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 )
 
@@ -42,14 +43,34 @@ func main() {
 			fmt.Println("Fail to accept client: ", err)
 			continue
 		}
-		decoder := json.NewDecoder(conn)
-		var jsonFile User
-		err = decoder.Decode(&jsonFile)
-		if err != nil {
-			fmt.Println("Fail to read from client: ", err)
-			continue
+		tmp_buff := make([]byte, 1024)
+		var data_buff []byte
+		var read_complete bool
+		for {
+			n, err := conn.Read(tmp_buff)
+			if err != nil {
+				fmt.Println("conn.Read() returned", err.Error())
+				if err == io.EOF {
+					read_complete = true
+				} else {
+					continue
+				}
+			}
+
+			fmt.Println("Read", n, "bytes")
+			data_buff = append(data_buff, tmp_buff[:n]...)
+
+			if read_complete {
+				break
+			}
 		}
 
+		jsonFile := User{}
+		err = json.Unmarshal(data_buff, &jsonFile)
+		if err != nil {
+			fmt.Println("Fail to unmarshal json: ", err)
+			continue
+		}
 		// if type is 1, then register
 		if jsonFile.Type == 1 {
 			fmt.Println("Register: ", jsonFile.Token)
