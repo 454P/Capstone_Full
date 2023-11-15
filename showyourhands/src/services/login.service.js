@@ -12,7 +12,13 @@ async function responseLogin(id, password) {
     await connection.query(query, [id])
         .then(async r => {
             let row = r.rows[0];
-            if (row.user_password === password) {
+            if(!row) {
+                result = {
+                    status: 204,
+                    message: "login failed due to wrong id"
+                }
+            }
+            else if (row.user_password === password) {
                 const token = await jwt.signupToken(row.user_id, row.user_login_id, row.user_email);
                 result = {
                     status: 200,

@@ -1,4 +1,4 @@
-package registerTcpServer
+package main
 
 import (
 	"encoding/json"
@@ -25,7 +25,7 @@ func connection(conn net.Conn) {
 
 func main() {
 	userMap := make(map[string]net.Conn)
-	socket, err := net.Listen("tcp", ":80")
+	socket, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		fmt.Println("Fail to open socket: ", err)
 	}
@@ -47,14 +47,14 @@ func main() {
 		n, err := conn.Read(buf)
 		if err != nil {
 			fmt.Println("Fail to read from client: ", err)
-			return
+			continue
 		}
 
 		jsonFile := User{}
 		err = json.Unmarshal(buf[:n], &jsonFile)
 		if err != nil {
 			fmt.Println("Fail to parse json: ", err)
-			return
+			continue
 		}
 
 		// if type is 1, then register
