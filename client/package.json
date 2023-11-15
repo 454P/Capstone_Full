@@ -9,6 +9,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@types/axios": "^0.14.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^20.8.4",
     "@types/react": "^18.0.0",
@@ -16,6 +17,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/recoil": "^0.0.9",
     "@types/socket.io-client": "^3.0.0",
+    "axios": "^1.6.2",
     "phaser": "^3.60.0",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
@@ -30,8 +32,8 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
+    "start": "IMAGE_INLINE_SIZE_LIMIT=0 craco start",
+    "build": "IMAGE_INLINE_SIZE_LIMIT=0 craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
