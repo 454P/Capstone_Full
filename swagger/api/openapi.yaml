@@ -9,18 +9,18 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/KZRT0123_1/showyourhands/1.0.0
-  description: SwaggerHub API Auto Mocking
+  - url: https://virtserver.swaggerhub.com/KZRT0123_1/showyourhands/1.0.0
+    description: SwaggerHub API Auto Mocking
 tags:
-- name: admins
-  description: Secured Admin-only calls
-- name: developers
-  description: Operations available to regular developers
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
 paths:
   /login:
     get:
       tags:
-      - front
+        - front
       summary: shows login page
       description: shows login page
       operationId: getLoginPage
@@ -32,32 +32,37 @@ paths:
       x-swagger-router-controller: Front
     post:
       tags:
-      - query
+        - query
       summary: login attempt
-      description: Adds an item to the system
-      operationId: loginPOST
+      description: check id and password
+      operationId: loginRequest
       requestBody:
-        description: Inventory item to add
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InventoryItem'
+              $ref: '#/components/schemas/LoginProfile'
+        description: login profile
+        required: true
       responses:
         "201":
           description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginToken'
         "400":
-          description: "invalid input, object invalid"
-        "409":
-          description: an existing item already exists
+          description: server dead
+        "401":
+          description: login failed
       x-swagger-router-controller: Query
 components:
   schemas:
     SignupProfile:
       required:
-      - email
-      - id
-      - nickname
-      - password
+        - email
+        - id
+        - nickname
+        - password
       type: object
       properties:
         id:
@@ -76,3 +81,31 @@ components:
           type: string
           format: "VARCHAR(255), !do not check at the backend!"
           example: asap@asap.com
+    LoginProfile:
+      required:
+        - id
+        - password
+      type: object
+      properties:
+          id:
+            type: string
+            format: VARCHAR(255)
+            example: asap0123
+          password:
+            type: string
+            format: VARCHAR(255)
+            example: asap0123!
+    LoginToken:
+      required:
+        - nickname
+        - token
+      type: object
+      properties:
+        nickname:
+          type: string
+          format: VARCHAR(20)
+          example: asap
+        token:
+          type: string
+          format: JWT
+          example: arstarst
