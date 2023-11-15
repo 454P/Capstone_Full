@@ -4,15 +4,16 @@ async function responseSignup(id, password, nickname, email){
         INSERT INTO capstone."user" (user_login_id, user_password, user_name, user_email)
         VALUES ($1, $2, $3, $4);
     `;
-    let result = null;
-    try{
-        result = connection.query(query, [id, password, nickname, email]);
-    } catch (err) {
-        return {
-            status: 401,
-            message: "signup failed"
-        }
-    }
+    let result = connection.query(query, [id, password, nickname, email])
+        .then(r => {
+            console.log(r);
+        }).catch(e => {
+            console.log(e);
+            return {
+                status: 401,
+                message: "signup failed"
+            }
+        });
     return {
         status: 200,
         message: "signup success"
