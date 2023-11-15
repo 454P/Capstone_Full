@@ -24,10 +24,9 @@ func connection(conn net.Conn) {
 				fmt.Println("conn.Read() returned", err.Error())
 				if err == io.EOF {
 					fmt.Println("Connection closed from client side: ", conn.RemoteAddr())
-					err := conn.Close()
-					if err != nil {
-						return
-					}
+					_ = conn.Close()
+					return
+
 				} else {
 					continue
 				}
