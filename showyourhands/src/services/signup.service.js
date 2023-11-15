@@ -15,8 +15,7 @@ async function responseSignup(id, password, nickname, email){
     }
     return {
         status: 200,
-        message: "signup success",
-        id: result.rows[0].user_id
+        message: "signup success"
     }
 }
 
