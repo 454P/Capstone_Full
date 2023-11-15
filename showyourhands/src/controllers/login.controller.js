@@ -1,14 +1,16 @@
-const loginService = require('../services/login.service')
+const loginService = require('../services/login.service');
 
 async function loginRequest(req, res, next) {
     try {
-        res.json(await loginService.responseLogin("a", "b"));
+        console.log(req.body);
+        const result = await loginService.responseLogin(req.body.id, req.body.password);
+        res.status(result.status).json(result);
     } catch (err) {
         console.error('Error on login', err.message);
         next(err)
     }
 }
- 
+
 module.exports = {
     loginRequest
 }
