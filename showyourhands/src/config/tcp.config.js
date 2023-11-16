@@ -1,6 +1,6 @@
 const net = require('net');
 
-const eof = TextEncoder.encode('0000000000')
+const eof = Buffer.from("0000000000", "utf-8"); // "0000000000
 //eof as byte
 
 const client = net.connect({port: 8080}, () => {
