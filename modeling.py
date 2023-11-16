@@ -172,12 +172,17 @@ def get_key():
 
 if __name__=="__main__":
     # TCP connection
+    print(1)
     byte_data = bytes(get_key(),'utf-8')
+    print(1)
     clientSocket = socket(AF_INET, SOCK_STREAM)
+    print(2)
     clientSocket.connect((HOST, TCP_PORT))
-
+    print(3)
+    end_msg = "0000000000"
     while True:
         data = clientSocket.recv(1024)
         if len(data):
             word = predict_word(data)
             clientSocket.send(bytes(word,'utf-8'))
+            clientSocket.send(bytes(end_msg,'utf-8'))
