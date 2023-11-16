@@ -1,3 +1,4 @@
+const connection = require('../config/db.config');
 async function responseGameStart(api){
     let result = null;
 
