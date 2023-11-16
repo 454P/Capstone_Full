@@ -110,6 +110,7 @@ func main() {
 		}
 	}(socket)
 
+	channel := make(chan []byte)
 	for {
 		conn, err := socket.Accept()
 		if err != nil {
@@ -131,7 +132,6 @@ func main() {
 					continue
 				}
 			}
-
 			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
 			if strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")) == "0000000000" {
@@ -142,7 +142,7 @@ func main() {
 				break
 			}
 		}
-		var channel chan []byte = make(chan []byte)
+
 		// unmarshal json
 		jsonFile := User{}
 		err = json.Unmarshal(dataBuff, &jsonFile)
