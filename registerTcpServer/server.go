@@ -9,8 +9,8 @@ import (
 )
 
 type User struct {
-	Type  int    `json:"type"`
-	Token string `json:"token"`
+	Type int    `json:"type"`
+	Api  string `json:"api"`
 }
 
 func connection(conn net.Conn) {
@@ -103,11 +103,11 @@ func main() {
 		}
 		// if type is 1, then register
 		if jsonFile.Type == 1 {
-			fmt.Println("Register: ", jsonFile.Token)
-			userMap[jsonFile.Token] = conn
+			fmt.Println("Register: ", jsonFile.Api)
+			userMap[jsonFile.Api] = conn
 		} else if jsonFile.Type == 2 {
-			fmt.Println("Connect: ", jsonFile.Token)
-			existingConn, ok := userMap[jsonFile.Token]
+			fmt.Println("Connect: ", jsonFile.Api)
+			existingConn, ok := userMap[jsonFile.Api]
 			if ok {
 				write, err := existingConn.Write([]byte("1"))
 				if err != nil {
