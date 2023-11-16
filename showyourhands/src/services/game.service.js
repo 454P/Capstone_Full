@@ -52,6 +52,7 @@ async function responseGameNext(api, count) {
         }
         return result;
     }
+    return result;
 }
 
 async function __wordFetch() {

@@ -114,7 +114,7 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 			tmpBuff := make([]byte, 1024)
 			n, err := conn.Read(tmpBuff)
 			if err != nil {
-				fmt.Println("conn.Read() returned from model", err.Error())
+				fmt.Println("conn.Read() returned from client", err.Error())
 				if err == io.EOF {
 					fmt.Println("Client closed connection")
 					conn.Close()
