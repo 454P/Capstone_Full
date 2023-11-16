@@ -181,7 +181,6 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 				Count: clientJson.Count,
 			}
 			incorrectJsonByte, err := json.Marshal(incorrectJson)
-			fmt.Println("Incorrect")
 			_, err = conn.Write(incorrectJsonByte)
 			if err != nil {
 				fmt.Println("Fail to write: ", err)
