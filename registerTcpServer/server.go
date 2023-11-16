@@ -110,7 +110,7 @@ func main() {
 		}
 	}(socket)
 
-	channel := make(chan []byte)
+	channel := make(chan [200000]byte)
 	for {
 		conn, err := socket.Accept()
 		if err != nil {
