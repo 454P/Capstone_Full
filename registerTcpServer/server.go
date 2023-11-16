@@ -24,7 +24,9 @@ func connection(conn net.Conn) {
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
 				if err == io.EOF {
-					continue
+					fmt.Println("Client closed connection")
+					conn.Close()
+					return
 				} else {
 					continue
 				}
