@@ -38,7 +38,7 @@ async function responseGameNext(api, count) {
         const word = await __wordFetch();
         result = {
             status: 200,
-            message: "gameStart success",
+            message: "gameNext success",
             word: word.sign_language_word,
             count: count + 1
         }
@@ -46,7 +46,7 @@ async function responseGameNext(api, count) {
         console.error('Error on gameStart', err.message);
         result = {
             status: 400,
-            message: "gameStart failed",
+            message: "gameNext failed",
             word: "null",
             count: 999
         }
