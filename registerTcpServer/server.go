@@ -54,7 +54,7 @@ func connection(conn net.Conn, channel chan []byte) {
 	}
 }
 
-func modelServer(conn net.Conn, channel chan []byte), wordChannel chan string)
+func modelServer(conn net.Conn, channel chan []byte, wordChannel chan string) {
 	// if channel has data, then send to client
 	for {
 		data := <-channel
@@ -106,7 +106,7 @@ func modelServer(conn net.Conn, channel chan []byte), wordChannel chan string)
 	}
 }
 
-func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan string){
+func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan string) {
 	for {
 		var dataBuff []byte
 		var readComplete bool
