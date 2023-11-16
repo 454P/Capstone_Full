@@ -141,6 +141,19 @@ paths:
         "401":
           description: game ended
       x-swagger-router-controller: Query
+  /game:
+    get:
+      tags:
+        - front
+      summary: shows game page
+      description: shows game page
+      operationId: getGamePage
+      responses:
+          "200":
+            description: game page updated
+          "400":
+            description: cannot load game page
+    x-swagger-router-controller: Front
 
 components:
   schemas:
