@@ -6,7 +6,7 @@ async function responseSignup(id, password, nickname, email){
     const apikey = await api.generateAPIkey();
     const query = `
         INSERT INTO capstone."user" (user_login_id, user_password, user_name, user_email, user_api_key)
-        VALUES ($1, $2, $3, $4);
+        VALUES ($1, $2, $3, $4, $%);
     `;
     let result = null;
     await connection.query(query, [id, hashedPassword, nickname, email, apikey])
