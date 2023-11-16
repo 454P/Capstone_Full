@@ -85,7 +85,7 @@ func main() {
 
 			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
-			if n == 10 && string(tmpBuff) == "0000000000" {
+			if string(tmpBuff) == "0000000000" {
 				break
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
