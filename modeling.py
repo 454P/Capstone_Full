@@ -167,22 +167,31 @@ def predict_word(sequence):
     return actions[np.argmax(res)]
 
 def get_key():
-    dict = {'type': 3, 'api': 123}
+    dict = {'type': 3, 'api': '123'}
     return json.dumps(dict)
 
 if __name__=="__main__":
     # TCP connection
-    print(1)
-    byte_data = bytes(get_key(),'utf-8')
-    print(1)
+    data = get_key()
+    byte_data = bytes(data,'utf-8')
     clientSocket = socket(AF_INET, SOCK_STREAM)
-    print(2)
     clientSocket.connect((HOST, TCP_PORT))
-    print(3)
+    clientSocket.send(byte_data)
     end_msg = "0000000000"
+    clientSocket.send(bytes(end_msg,'utf-8'))
+    received_data = b''
     while True:
-        data = clientSocket.recv(1024)
+        while True:
+            # 데이터를 최대 BUFFER_SIZE만큼 받음
+            data = clientSocket.recv(4096)
+            print(f"data: {data}")
+            if not data or data.endswith(mm):  # 데이터가 더 이상 없으면 루프 종료
+                break
+            
+            received_data += data  # 받은 데이터를 저장
+
+
         if len(data):
-            word = predict_word(data)
+            word = predict_word(received_data)
             clientSocket.send(bytes(word,'utf-8'))
             clientSocket.send(bytes(end_msg,'utf-8'))
