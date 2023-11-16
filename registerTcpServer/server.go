@@ -35,6 +35,7 @@ func connection(conn net.Conn, channel chan []byte) {
 			if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
 				readComplete = true
 				tmpBuff = []byte(strings.TrimSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000"))
+				n = len(tmpBuff)
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
 			if readComplete {
@@ -86,6 +87,7 @@ func modelServer(conn net.Conn, channel chan []byte) {
 			if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
 				readComplete = true
 				tmpBuff = []byte(strings.TrimSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000"))
+				n = len(tmpBuff)
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
 			if readComplete {
@@ -110,7 +112,7 @@ func main() {
 		}
 	}(socket)
 
-	channel := make(chan [200000]byte)
+	channel := make(chan []byte)
 	for {
 		conn, err := socket.Accept()
 		if err != nil {
