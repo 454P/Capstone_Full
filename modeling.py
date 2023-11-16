@@ -106,58 +106,6 @@ def make_model():
 
 def predict_word(sequence):
     model = make_model()
-    '''
-    sequence = []
-    sentence = []
-    predictions = []
-    count = 0
-    sequence_length = 30
-
-    cap = cv2.VideoCapture(filePath)
-
-
-    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-        count = count+1
-
-
-        #ret, frame = cap.read()
-        # 프레임 카운터 초기화
-        frame_count = 0
-
-        # 추출할 프레임 간격 설정
-        frame_interval = 5  # 5프레임당 1장 추출
-        while True:
-            ret, frame = cap.read()
-
-            # 비디오에서 프레임을 읽을 수 없으면 종료
-            if not ret:
-                break
-
-
-            frame_count += 1
-
-            # frame_interval 만큼의 간격으로 프레임 저장
-            if frame_count % frame_interval == 0:
-                image, results = mediapipe_detection(frame, holistic)
-                keypoints = extract_keypoints(results)
-                sequence.append(keypoints)
-            # for frame_num in range(sequence_length):
-            #   image, results = mediapipe_detection(frame, holistic)
-            #   keypoints = extract_keypoints(results)
-            #   sequence.append(keypoints)
-
-            # 포즈 주석을 이미지 위에 그립니다.
-            # image.flags.writeable = True
-            # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            
-            mp_drawing.draw_landmarks(
-                image,
-                results.pose_landmarks,
-                mp_pose.POSE_CONNECTIONS,
-                landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-            
-    print(len(sequence))
-    '''
     restored_sequence = json.loads(sequence.decode('utf-8'))
     sequence_np = []
     for elem in restored_sequence:
@@ -184,13 +132,13 @@ if __name__=="__main__":
         while True:
             # 데이터를 최대 BUFFER_SIZE만큼 받음
             data = clientSocket.recv(4096)
-            print(f"data: {data}")
-            if not data or data.endswith(mm):  # 데이터가 더 이상 없으면 루프 종료
+            if not data or data.endswith(bytes(end_msg,'utf-8')):  # 데이터가 더 이상 없으면 루프 종료
+                received_data += data
+                received_data[:-10]
                 break
-            
             received_data += data  # 받은 데이터를 저장
 
-
+        print(f"data: {data}")
         if len(data):
             word = predict_word(received_data)
             clientSocket.send(bytes(word,'utf-8'))
