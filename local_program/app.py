@@ -1,14 +1,19 @@
-from flask import Flask
 import virtualcamera as vc
 import cv2
 import time
 import json
+import argparse
+import requests
+from socket import *
 
-app = Flask(__name__)
+url = 'http://49.142.76.124:8000/login'
+datas = {'id': 'asap0123', 'password': 'asap0123!'}
+HOST = "49.142.76.124"
+TCP_PORT = 8080
 
 detector = vc.keypointDetector()
 cap = cv2.VideoCapture(0)
-@app.route('/')
+
 def record_video():
     pTime = 0
     cTime = 0
@@ -42,8 +47,28 @@ def record_video():
     print(len(sequence))
     return json.dumps(sequence[:30])
 
+def get_jwt():
+    response = requests.post(url, data=datas)
+    token = response.json()['data']['token']
+    # json 저장
+    dict = {'type': 1, 'token': token}
+    return json.dumps(dict)
 
 if __name__=="__main__":
-  app.run(debug=True)
-  # host 등을 직접 지정하고 싶다면
-  # app.run(host="127.0.0.1", port="5000", debug=True)
+    data = get_jwt()
+
+    # TCP connection
+    byte_data = bytes(data,'utf-8')
+    clientSocket = socket(AF_INET, SOCK_STREAM)
+    clientSocket.connect((HOST, TCP_PORT))
+    clientSocket.send(byte_data)
+    mm = "0000000000"
+    clientSocket.send(bytes(mm,'utf-8'))
+    while True:
+        data = clientSocket.recv(1024)
+        if len(data):
+            msg = data.decode()
+            print(msg)
+            sequence_data = bytes(record_video(), 'utf-8')
+            clientSocket.send(sequence_data)
+    
