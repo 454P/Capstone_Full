@@ -22,7 +22,7 @@ func connection(conn net.Conn, channel chan []byte) {
 			tmpBuff := make([]byte, 1024)
 			n, err := conn.Read(tmpBuff)
 			if err != nil {
-				fmt.Println("conn.Read() returned", err.Error())
+				fmt.Println("conn.Read() returned from python client", err.Error())
 				if err == io.EOF {
 					fmt.Println("Client closed connection")
 					conn.Close()
@@ -72,7 +72,7 @@ func modelServer(conn net.Conn, channel chan []byte) {
 			tmpBuff := make([]byte, 1024)
 			n, err := conn.Read(tmpBuff)
 			if err != nil {
-				fmt.Println("conn.Read() returned", err.Error())
+				fmt.Println("conn.Read() returned from model", err.Error())
 				if err == io.EOF {
 					fmt.Println("Client closed connection")
 					conn.Close()
