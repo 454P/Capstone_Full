@@ -10,6 +10,7 @@ router.post('/signup', signupController.signupRequest);
 
 router.post('/game/start', gameController.gameStartRequest);
 router.post('/game/next', gameController.gameNextRequest);
+router.post('/game/finish', gameController.gameNextRequest);
 
 router.post('/main/signRequest', mainController.signRequest);
 
