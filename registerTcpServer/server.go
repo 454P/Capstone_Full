@@ -16,30 +16,26 @@ type User struct {
 func connection(conn net.Conn) {
 	// try to read
 	for {
-		tmpBuff := make([]byte, 1024)
 		var dataBuff []byte
 		var readComplete bool
 		for {
+			tmpBuff := make([]byte, 1024)
 			n, err := conn.Read(tmpBuff)
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
 				if err == io.EOF {
-					fmt.Println("Connection closed from client side: ", conn.RemoteAddr())
-					_ = conn.Close()
-					return
-
+					continue
 				} else {
 					continue
 				}
 			}
 
-			fmt.Println("Read", n, "bytes")
+			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
-			if n == 10 && string(tmpBuff) == "0000000000" {
+			if strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")) == "0000000000" {
 				break
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
-
 			if readComplete {
 				break
 			}
