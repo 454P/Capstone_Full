@@ -32,8 +32,9 @@ func connection(conn net.Conn) {
 
 			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
-			if strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")) == "0000000000" {
-				break
+			if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
+				readComplete = true
+				tmpBuff = []byte(strings.TrimSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000"))
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
 			if readComplete {
