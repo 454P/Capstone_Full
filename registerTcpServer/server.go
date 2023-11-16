@@ -156,7 +156,7 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 		word = strings.Trim(strings.TrimSpace(word), "\x00")
 		correctWord := strings.Trim(strings.TrimSpace(clientJson.Word), "\x00")
 		// compare word
-		if word == clientJson.Word {
+		if word == correctWord {
 			fmt.Println("Correct")
 			_, err = conn.Write([]byte("Correct"))
 			if err != nil {
