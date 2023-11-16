@@ -106,7 +106,7 @@ def make_model():
 
 def predict_word(sequence):
     model = make_model()
-    restored_sequence = json.loads(sequence.decode('utf-8'))
+    restored_sequence = json.loads(sequence)
     sequence_np = []
     for elem in restored_sequence:
         sequence_np.append(np.array(elem))
@@ -126,6 +126,7 @@ if __name__=="__main__":
     clientSocket.connect((HOST, TCP_PORT))
     clientSocket.send(byte_data)
     end_msg = "0000000000"
+    end_byte = bytes(end_msg,'utf-8')
     clientSocket.send(bytes(end_msg,'utf-8'))
     received_data = b''
     while True:
@@ -134,12 +135,14 @@ if __name__=="__main__":
             data = clientSocket.recv(4096)
             if not data or data.endswith(bytes(end_msg,'utf-8')):  # 데이터가 더 이상 없으면 루프 종료
                 received_data += data
-                received_data[:-10]
+                received_data[:-len(end_byte)]
                 break
             received_data += data  # 받은 데이터를 저장
-
-        print(f"data: {data}")
+        keypoint_data = received_data.decode('utf-8')[:-10]
+        received_data = b''
+        print(f"data: {keypoint_data}")
         if len(data):
-            word = predict_word(received_data)
+            word = predict_word(keypoint_data)
+            print(word)
             clientSocket.send(bytes(word,'utf-8'))
             clientSocket.send(bytes(end_msg,'utf-8'))

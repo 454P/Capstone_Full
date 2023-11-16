@@ -14,6 +14,13 @@ def get_key():
     dict = {'type': 2, 'api': api}
     return json.dumps(dict)
 
+def get_word():
+    response = requests.post(url, data=datas)
+    api = response.json()['data']['api']
+    # json 저장
+    dict = {'type': 2, 'api': api, 'word': '기다리다'}
+    return json.dumps(dict)
+
 if __name__=="__main__":
     data = get_key()
 
@@ -23,4 +30,7 @@ if __name__=="__main__":
     clientSocket.connect((HOST, TCP_PORT))
     clientSocket.send(byte_data)
     end_msg = "0000000000"
+    clientSocket.send(bytes(end_msg,'utf-8'))
+    data2 = get_word()
+    clientSocket.send(bytes(data2,'utf-8'))
     clientSocket.send(bytes(end_msg,'utf-8'))
