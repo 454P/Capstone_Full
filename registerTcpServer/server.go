@@ -70,10 +70,10 @@ func main() {
 		}
 		fmt.Println("Accept: ", conn.RemoteAddr())
 		// read packet until "0000000000"
-		tmpBuff := make([]byte, 1024)
 		var dataBuff []byte
 		var readComplete bool
 		for {
+			tmpBuff := make([]byte, 1024)
 			n, err := conn.Read(tmpBuff)
 			if err != nil {
 				fmt.Println("conn.Read() returned", err.Error())
@@ -86,11 +86,10 @@ func main() {
 
 			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
-			if strings.Trim(string(tmpBuff), " ") == "0000000000" {
+			if strings.Trim(string(tmpBuff), " \\0") == "0000000000" {
 				break
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
-			tmpBuff = make([]byte, 1024)
 			if readComplete {
 				break
 			}
