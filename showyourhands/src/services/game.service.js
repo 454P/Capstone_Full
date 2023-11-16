@@ -2,7 +2,7 @@ async function responseGameStart(api){
     let result = null;
 
     try {
-        const word = await wordFetch();
+        const word = await __wordFetch();
         result = {
             status: 200,
             message: "gameStart success",
@@ -12,20 +12,48 @@ async function responseGameStart(api){
     } catch (err) {
         console.error('Error on gameStart', err.message);
         result = {
-            status: 401,
+            status: 400,
             message: "gameStart failed",
-            word: "null"
+            word: "null",
+            count: 999
         }
         return result;
     }
     return result;
 }
 
-async function gameNext() {
+async function responseGameNext(api, count) {
+    if (count >= 5) {
+        return {
+            status: 401,
+            message: "Game End",
+            word: "null",
+            count: count
+        }
+    }
+    let result = null;
 
+    try {
+        const word = await __wordFetch();
+        result = {
+            status: 200,
+            message: "gameStart success",
+            word: word.sign_language_word,
+            count: count + 1
+        }
+    } catch (err) {
+        console.error('Error on gameStart', err.message);
+        result = {
+            status: 400,
+            message: "gameStart failed",
+            word: "null",
+            count: 999
+        }
+        return result;
+    }
 }
 
-async function wordFetch() {
+async function __wordFetch() {
     const query = `
     SELECT * FROM capstone."sign_language"
     ORDER BY RANDOM()
@@ -41,4 +69,9 @@ async function wordFetch() {
             throw e;
         })
 
+}
+
+module.exports = {
+    responseGameStart,
+    responseGameNext
 }
