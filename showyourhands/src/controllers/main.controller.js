@@ -10,3 +10,7 @@ async function signRequest(req, res, next) {
         next(err)
     }
 }
+
+module.exports = {
+    signRequest
+}
