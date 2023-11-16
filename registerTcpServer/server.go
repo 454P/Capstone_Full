@@ -152,6 +152,9 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 
 		// wait for word
 		word := <-wordChannel
+
+		word = strings.Trim(strings.TrimSpace(word), "\x00")
+		correctWord := strings.Trim(strings.TrimSpace(clientJson.Word), "\x00")
 		// compare word
 		if word == clientJson.Word {
 			fmt.Println("Correct")
