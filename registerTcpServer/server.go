@@ -31,8 +31,6 @@ func connection(conn net.Conn, channel chan []byte) {
 					continue
 				}
 			}
-
-			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
 			// if packet is "0000000000", then break
 			if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
 				readComplete = true
@@ -44,7 +42,7 @@ func connection(conn net.Conn, channel chan []byte) {
 			}
 		}
 		packet := dataBuff
-		fmt.Println("Read: ", string(packet))
+		fmt.Println("Read: packet from client, size: ", len(packet))
 		channel <- packet
 	}
 }
@@ -56,6 +54,11 @@ func modelServer(conn net.Conn, channel chan []byte) {
 		case data := <-channel:
 			fmt.Println("Write: ", string(data))
 			_, err := conn.Write(data)
+			if err != nil {
+				fmt.Println("Fail to write: ", err)
+				continue
+			}
+			_, err = conn.Write([]byte("0000000000"))
 			if err != nil {
 				fmt.Println("Fail to write: ", err)
 				continue
