@@ -14,9 +14,10 @@ type User struct {
 }
 
 type WebClient struct {
-	Type int    `json:"type"`
-	Api  string `json:"api"`
-	Word string `json:"word"`
+	Type  int    `json:"type"`
+	Api   string `json:"api"`
+	Word  string `json:"word"`
+	Count int    `json:"count"`
 }
 
 func connection(conn net.Conn, channel chan []byte) {
@@ -158,14 +159,30 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 		// compare word
 		if word == correctWord {
 			fmt.Println("Correct")
-			_, err = conn.Write([]byte("Correct"))
+			correctJson := WebClient{
+				Type:  1,
+				Api:   clientJson.Api,
+				Word:  clientJson.Word,
+				Count: clientJson.Count,
+			}
+			correctJsonByte, err := json.Marshal(correctJson)
+
+			_, err = conn.Write(correctJsonByte)
 			if err != nil {
 				fmt.Println("Fail to write: ", err)
 				continue
 			}
 		} else {
 			fmt.Println("Incorrect")
-			_, err = conn.Write([]byte("Incorrect"))
+			incorrectJson := WebClient{
+				Type:  0,
+				Api:   clientJson.Api,
+				Word:  clientJson.Word,
+				Count: clientJson.Count,
+			}
+			incorrectJsonByte, err := json.Marshal(incorrectJson)
+			fmt.Println("Incorrect")
+			_, err = conn.Write(incorrectJsonByte)
 			if err != nil {
 				fmt.Println("Fail to write: ", err)
 				continue
