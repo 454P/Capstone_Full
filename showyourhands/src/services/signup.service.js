@@ -1,14 +1,15 @@
 const connection = require('../config/db.config');
 const jwt = require('../modules/jwt.module');
+const api = require('../modules/api.module');
 async function responseSignup(id, password, nickname, email){
     const hashedPassword = await jwt.hashPassword(password);
-
+    const apikey = await api.generateAPIkey();
     const query = `
-        INSERT INTO capstone."user" (user_login_id, user_password, user_name, user_email)
+        INSERT INTO capstone."user" (user_login_id, user_password, user_name, user_email, user_api_key)
         VALUES ($1, $2, $3, $4);
     `;
     let result = null;
-    await connection.query(query, [id, hashedPassword, nickname, email])
+    await connection.query(query, [id, hashedPassword, nickname, email, apikey])
         .then(r => {
             console.log(r);
             result = {

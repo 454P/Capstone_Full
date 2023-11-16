@@ -3,7 +3,7 @@ const jwt = require('../modules/jwt.module');
 
 async function responseLogin(id, password) {
     const query = `
-        SELECT user_id, user_login_id, user_password, user_name
+        SELECT user_id, user_login_id, user_password, user_name, user_api_key
         FROM capstone."user"
         WHERE user_login_id = $1;
     `;
@@ -27,6 +27,7 @@ async function responseLogin(id, password) {
                         id: row.user_id,
                         nickname: row.user_name,
                         token: token.token,
+                        api: row.user_api_key
                     }
                 }
             }
