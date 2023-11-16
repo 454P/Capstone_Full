@@ -154,12 +154,14 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 		word := <-wordChannel
 		// compare word
 		if word == clientJson.Word {
+			fmt.Println("Correct")
 			_, err = conn.Write([]byte("Correct"))
 			if err != nil {
 				fmt.Println("Fail to write: ", err)
 				continue
 			}
 		} else {
+			fmt.Println("Incorrect")
 			_, err = conn.Write([]byte("Incorrect"))
 			if err != nil {
 				fmt.Println("Fail to write: ", err)
