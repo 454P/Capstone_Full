@@ -19,3 +19,7 @@ async function responseSignRequest(api, word){
         message: "signRequest success"
     }
 }
+
+module.exports = {
+    responseSignRequest
+}
