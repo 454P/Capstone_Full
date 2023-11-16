@@ -47,28 +47,30 @@ def record_video():
     print(len(sequence))
     return json.dumps(sequence[:30])
 
-def get_jwt():
+def get_key():
     response = requests.post(url, data=datas)
-    token = response.json()['data']['token']
+    api = response.json()['data']['api']
     # json 저장
-    dict = {'type': 1, 'token': token}
+    dict = {'type': 1, 'api': api}
     return json.dumps(dict)
 
 if __name__=="__main__":
-    data = get_jwt()
+    data = get_key()
 
     # TCP connection
     byte_data = bytes(data,'utf-8')
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((HOST, TCP_PORT))
     clientSocket.send(byte_data)
-    mm = "0000000000"
-    clientSocket.send(bytes(mm,'utf-8'))
+    end_msg = "0000000000"
+    clientSocket.send(bytes(end_msg,'utf-8'))
+
     while True:
         data = clientSocket.recv(1024)
         if len(data):
             msg = data.decode()
-            print(msg)
+            print(f"msg: {msg}")
             sequence_data = bytes(record_video(), 'utf-8')
-            clientSocket.send(sequence_data)
+            clientSocket.sendall(sequence_data)
+            clientSocket.send(bytes(end_msg,'utf-8'))
     

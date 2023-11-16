@@ -11,6 +11,11 @@ from sklearn.preprocessing import LabelEncoder
 import joblib
 import time, io, os, time, sys, natsort, random, math
 import json
+from socket import *
+import requests
+datas = {'id': 'asap0123', 'password': 'asap0123!'}
+HOST = "49.142.76.124"
+TCP_PORT = 8080
 
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
@@ -99,10 +104,9 @@ def make_model():
 
     return model
 
-
-
-def predict_word(filePath=""):
+def predict_word(sequence):
     model = make_model()
+    '''
     sequence = []
     sentence = []
     predictions = []
@@ -145,15 +149,35 @@ def predict_word(filePath=""):
             # 포즈 주석을 이미지 위에 그립니다.
             # image.flags.writeable = True
             # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            '''
+            
             mp_drawing.draw_landmarks(
                 image,
                 results.pose_landmarks,
                 mp_pose.POSE_CONNECTIONS,
                 landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-            '''
+            
     print(len(sequence))
-    res = model.predict(np.expand_dims(sequence[:30], axis=0))[0]
-    print(actions[np.argmax(res)])
+    '''
+    restored_sequence = json.loads(sequence.decode('utf-8'))
+    sequence_np = []
+    for elem in restored_sequence:
+        sequence_np.append(np.array(elem))
 
-predict_word("영상/수어_계산.mp4")
+    res = model.predict(np.expand_dims(sequence_np, axis=0))[0]
+    return actions[np.argmax(res)]
+
+def get_key():
+    dict = {'type': 3, 'api': 123}
+    return json.dumps(dict)
+
+if __name__=="__main__":
+    # TCP connection
+    byte_data = bytes(get_key(),'utf-8')
+    clientSocket = socket(AF_INET, SOCK_STREAM)
+    clientSocket.connect((HOST, TCP_PORT))
+
+    while True:
+        data = clientSocket.recv(1024)
+        if len(data):
+            word = predict_word(data)
+            clientSocket.send(bytes(word,'utf-8'))
