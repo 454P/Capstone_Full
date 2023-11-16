@@ -50,52 +50,50 @@ func connection(conn net.Conn, channel chan []byte) {
 func modelServer(conn net.Conn, channel chan []byte) {
 	// if channel has data, then send to client
 	for {
-		select {
-		case data := <-channel:
-			fmt.Println("Write: ", string(data))
-			_, err := conn.Write(data)
-			if err != nil {
-				fmt.Println("Fail to write: ", err)
-				continue
-			}
-			_, err = conn.Write([]byte("0000000000"))
-			if err != nil {
-				fmt.Println("Fail to write: ", err)
-				continue
-			}
-			fmt.Println("sent to db")
-
-			//recv word
-			var dataBuff []byte
-			var readComplete bool
-			for {
-				tmpBuff := make([]byte, 1024)
-				n, err := conn.Read(tmpBuff)
-				if err != nil {
-					fmt.Println("conn.Read() returned", err.Error())
-					if err == io.EOF {
-						fmt.Println("Client closed connection")
-						conn.Close()
-						return
-					} else {
-						continue
-					}
-				}
-
-				fmt.Println("Read", n, "bytes: ", string(tmpBuff))
-				// if packet is "0000000000", then break
-				if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
-					readComplete = true
-					tmpBuff = []byte(strings.TrimSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000"))
-				}
-				dataBuff = append(dataBuff, tmpBuff[:n]...)
-				if readComplete {
-					break
-				}
-			}
-			packet := dataBuff
-			fmt.Println("Read from model server: ", string(packet))
+		data := <-channel
+		fmt.Println("Write: ", string(data))
+		_, err := conn.Write(data)
+		if err != nil {
+			fmt.Println("Fail to write: ", err)
+			continue
 		}
+		_, err = conn.Write([]byte("0000000000"))
+		if err != nil {
+			fmt.Println("Fail to write: ", err)
+			continue
+		}
+		fmt.Println("sent to db")
+
+		//recv word
+		var dataBuff []byte
+		var readComplete bool
+		for {
+			tmpBuff := make([]byte, 1024)
+			n, err := conn.Read(tmpBuff)
+			if err != nil {
+				fmt.Println("conn.Read() returned", err.Error())
+				if err == io.EOF {
+					fmt.Println("Client closed connection")
+					conn.Close()
+					return
+				} else {
+					continue
+				}
+			}
+
+			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
+			// if packet is "0000000000", then break
+			if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
+				readComplete = true
+				tmpBuff = []byte(strings.TrimSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000"))
+			}
+			dataBuff = append(dataBuff, tmpBuff[:n]...)
+			if readComplete {
+				break
+			}
+		}
+		packet := dataBuff
+		fmt.Println("Read from model server: ", string(packet))
 	}
 }
 
