@@ -24,7 +24,7 @@ async function responseGameStart(api){
 }
 
 async function responseGameNext(api, count) {
-    if (count >= 2) {
+    if (count >= 5) {
         return {
             status: 401,
             message: "Game End",
