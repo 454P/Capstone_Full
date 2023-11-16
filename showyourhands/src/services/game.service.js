@@ -1,28 +1,44 @@
-async function responseGameStart(){
+async function responseGameStart(api){
+    let result = null;
+
+    try {
+        const word = await wordFetch();
+        result = {
+            status: 200,
+            message: "gameStart success",
+            word: word.sign_language_word,
+            count: 1
+        }
+    } catch (err) {
+        console.error('Error on gameStart', err.message);
+        result = {
+            status: 401,
+            message: "gameStart failed",
+            word: "null"
+        }
+        return result;
+    }
+    return result;
+}
+
+async function gameNext() {
+
+}
+
+async function wordFetch() {
     const query = `
     SELECT * FROM capstone."sign_language"
     ORDER BY RANDOM()
     LIMIT 1;
     `;
 
-    let result = null;
 
-    await connection.query(query)
+    return await connection.query(query)
         .then(r => {
-            const row = r.rows[0];
-            result = {
-                status: 200,
-                message: "game start",
-                word: row.sign_language_word
-            }
+            return r.rows[0];
         })
         .catch(e => {
-            console.log(e);
-            result = {
-                status: 401,
-                message: "game start failed"
-            }
+            throw e;
         })
 
-    return result;
 }

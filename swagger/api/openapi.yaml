@@ -89,6 +89,58 @@ paths:
         "401":
           description: signup failed
       x-swagger-router-controller: Query
+  /game/start:
+    get:
+      tags:
+        - query
+      summary: fetch one word
+      description: fetch one word, return count
+      operationId: gameStartRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientSideToken'
+        description: client side token
+        required: true
+      responses:
+        "200":
+          description: word fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameWord'
+        "400":
+          description: game start failed
+        "401":
+          description: game ended
+      x-swagger-router-controller: Query
+  /game/next:
+    get:
+      tags:
+        - query
+      summary: fetch next word
+      description: fetch one word, return count. if count > X return 401
+      operationId: gameStartRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientSideToken'
+        description: client side token
+        required: true
+      responses:
+        "200":
+          description: word fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameWord'
+        "400":
+          description: game start failed
+        "401":
+          description: game ended
+      x-swagger-router-controller: Query
 
 components:
   schemas:
@@ -144,3 +196,32 @@ components:
           type: string
           format: JWT
           example: arstarst
+    ClientSideToken:
+      required:
+        - api
+        - count
+      type: object
+      properties:
+          api:
+            type: string
+            format: VARCHAR(128)
+            example: arstarst
+          count:
+            type: integer
+            format: INT
+            example: 0
+
+    GameWord:
+      required:
+        - word
+        - count
+      type: object
+      properties:
+        word:
+          type: string
+          format: VARCHAR(255)
+          example: 인사
+        count:
+          type: integer
+          format: INT
+          example: 0
