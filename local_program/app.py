@@ -37,10 +37,10 @@ def record_video():
             #result, image = detector.get_keypoint(img)
             #sequence.append(result.tolist())
             #print(cTime - pTime)
-    
+            print(f"time: {cTime - pTime}")
         if cTime - pTime > 5.5:
             break
-
+    
     for img in images:
         result, _ = detector.get_keypoint(img)
         sequence.append(result.tolist())
