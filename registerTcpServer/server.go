@@ -89,7 +89,7 @@ func main() {
 				break
 			}
 			dataBuff = append(dataBuff, tmpBuff[:n]...)
-
+			tmpBuff = make([]byte, 1024)
 			if readComplete {
 				break
 			}
