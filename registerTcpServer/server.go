@@ -174,6 +174,78 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 	}
 }
 
+func serverSideClient(conn net.Conn, userMap map[string]net.Conn, wordChannel chan string) {
+	for {
+		var dataBuff []byte
+		var readComplete bool
+		for {
+			tmpBuff := make([]byte, 1024)
+			n, err := conn.Read(tmpBuff)
+			if err != nil {
+				fmt.Println("conn.Read() returned from client", err.Error())
+				if err == io.EOF {
+					fmt.Println("Client closed connection")
+					conn.Close()
+					return
+				} else {
+					continue
+				}
+			}
+
+			fmt.Println("Read", n, "bytes: ", string(tmpBuff))
+			// if packet is "0000000000", then break
+			if strings.HasSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000") {
+				readComplete = true
+				tmpBuff = []byte(strings.TrimSuffix(strings.TrimSpace(strings.Trim(string(tmpBuff), "\x00")), "0000000000"))
+				n = len(tmpBuff)
+			}
+			dataBuff = append(dataBuff, tmpBuff[:n]...)
+			if readComplete {
+				break
+			}
+		}
+		clientJson := WebClient{}
+		err := json.Unmarshal(dataBuff, &clientJson)
+		if err != nil {
+			fmt.Println("Fail to unmarshal json: ", err)
+			return
+		}
+		fmt.Println("Read from web client: ", clientJson.Word)
+		existingConn, ok := userMap[clientJson.Api]
+		if !ok {
+			fmt.Println("Fail to find api: ", clientJson.Api)
+			continue
+		}
+
+		_, err = existingConn.Write([]byte("SignLanguage Request"))
+		if err != nil {
+			fmt.Println("Fail to write: ", err)
+			continue
+		}
+
+		word := <-wordChannel
+
+		word = strings.Trim(strings.TrimSpace(word), "\x00")
+		correctWord := strings.Trim(strings.TrimSpace(clientJson.Word), "\x00")
+		// compare word
+		if word == correctWord {
+			fmt.Println("Correct")
+			_, err = conn.Write([]byte("Correct"))
+			if err != nil {
+				fmt.Println("Fail to write: ", err)
+				continue
+			}
+		} else {
+			fmt.Println("Incorrect")
+			_, err = conn.Write([]byte("Incorrect"))
+			if err != nil {
+				fmt.Println("Fail to write: ", err)
+				continue
+			}
+		}
+	}
+}
+
 func main() {
 	userMap := make(map[string]net.Conn)
 	socket, err := net.Listen("tcp", ":8080")
@@ -247,6 +319,11 @@ func main() {
 		} else if jsonFile.Type == 3 {
 			fmt.Println("Model connected")
 			go modelServer(conn, channel, wordChannel)
+		} else if jsonFile.Type == 4 {
+			fmt.Println("Server side client connected")
+			go serverSideClient(conn, userMap, wordChannel)
+		} else {
+			fmt.Println("Unknown type")
 		}
 	}
 }
