@@ -29,9 +29,10 @@ function LoginPage() {
     setPassword('');
   };
 
-  const changeNickname = async (nickname: string) => {
+  const enterTown = async (nickname: string, apiKey: string) => {
     setSocket((old) => {
-      const newSocket = { ...old, nickname: nickname };
+      const newSocket = { ...old, nickname: nickname, apiKey: apiKey };
+      socket.socket.emit('start sign', apiKey);
       return newSocket;
     });
   };
@@ -44,7 +45,7 @@ function LoginPage() {
       });
       console.log(response);
       if (response.data.status === 200) {
-        await changeNickname(response.data.data.nickname);
+        await enterTown(response.data.data.nickname, response.data.data.api);
         navigate('/town');
       } else if (response.status === 204) {
         alert('없는 아이디입니다!');
