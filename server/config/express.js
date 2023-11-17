@@ -32,6 +32,9 @@ module.exports = function () {
     const MAXIMUM = process.env.MAXIMUM || 4;
 
     io.on("connection", (socket) => {
+        var client;
+        const endOfLine = new TextEncoder().encode("0000000000");
+
         console.log(socket.id, "connection");
 
         socket.on("join_room", (data) => {
@@ -147,6 +150,36 @@ module.exports = function () {
                 direction: data.direction,
                 nickname: data.nickname,
             });
+        });
+
+        /** 수어 시작!! */
+        socket.on("start sign", (data) => {
+            // tcp 연결
+            var net = require("net");
+
+            var options = {
+                // 접속 정보 설정
+                port: 8080,
+                host: "49.142.76.124",
+            };
+
+            client = net.connect(options, () => {
+                console.log("connected");
+                const sendData = { type: 2, api: data };
+                client.write(JSON.stringify(sendData));
+                client.write(endOfLine);
+
+                client.on("data", (responseData) => {
+                    const response = JSON.parse(responseData.toString());
+                    console.log(response);
+                    socket.emit(`sign response${response.count}`, response.type);
+                });
+            });
+        });
+
+        socket.on("sign", (data) => {
+            client.write(JSON.stringify(data));
+            client.write(endOfLine);
         });
 
         socket.on("disconnect", () => {

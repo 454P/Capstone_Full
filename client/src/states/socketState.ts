@@ -5,6 +5,7 @@ interface customSocket {
   nickname: string;
   socket: Socket;
   isReady: boolean;
+  apiKey: string;
 }
 
 export const socketState = atom<customSocket>({
@@ -13,6 +14,7 @@ export const socketState = atom<customSocket>({
     nickname: `${String(Math.floor(Math.random() * 1000))}`,
     socket: io('http://localhost:8080'),
     isReady: false,
+    apiKey: '',
   },
   dangerouslyAllowMutability: true,
 });
