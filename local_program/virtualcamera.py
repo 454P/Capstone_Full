@@ -10,24 +10,29 @@ class keypointDetector():
         self.mp_holistic = mp.solutions.holistic
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_face_mesh = mp.solutions.face_mesh
-    
 
-    def mediapipe_detection(self, image, model):
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image.flags.writeable = False
-        self.results = model.process(image)
-        image.flags.writeable = True
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        return image
-    def extract_keypoints(self):
-        lh = np.array([[res.x*3, res.y*3, res.z*3] for res in self.results.left_hand_landmarks.landmark]).flatten() if self.results.left_hand_landmarks else np.zeros(21*3)
-        rh = np.array([[res.x*3, res.y*3, res.z*3] for res in self.results.right_hand_landmarks.landmark]).flatten() if self.results.right_hand_landmarks else np.zeros(21*3)
-        return np.concatenate([lh, rh])
+    def mediapipe_detection(image, model):
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
+        image.flags.writeable = False  # 이미지 수정 불가
+        results = model.process(image)  # 모델을 사용해 입력 이미지에 대한 예측 수행
+        image.flags.writeable = True  # 이미지 다시 수정가능
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # COLOR COVERSION RGB 2 BGR
+        return image, results
+
+    def extract_keypoints(results):
+        pose = np.array([[res.x, res.y, res.z, res.visibility] for res in
+                        results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33 * 4)
+        lh = np.array([[res.x, res.y, res.z] for res in
+                    results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21 * 3)
+        rh = np.array([[res.x, res.y, res.z] for res in
+                    results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(
+            21 * 3)
+        return np.concatenate([pose, lh, rh])
     
     def get_keypoint(self, frame, draw=True):
         with self.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-            image = self.mediapipe_detection(frame, holistic)
-            keypoints = self.extract_keypoints()
+            image, results = self.mediapipe_detection(frame, holistic)
+            keypoints = self.extract_keypoints(results)
         return keypoints, image
 
 def main():

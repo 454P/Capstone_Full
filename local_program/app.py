@@ -21,7 +21,7 @@ def record_video():
     images = []
     frame_count = 0
     # 추출할 프레임 간격 설정
-    frame_interval = 5  # 5프레임당 1장 추출
+    frame_interval = 3  # 5프레임당 1장 추출
 
     #cap = cv2.VideoCapture(0)
     #detector = vc.keypointDetector()
@@ -38,14 +38,14 @@ def record_video():
             #sequence.append(result.tolist())
             #print(cTime - pTime)
             print(f"time: {cTime - pTime}")
-        if cTime - pTime > 5.5:
+        if cTime - pTime > 3.5:
             break
     
     for img in images:
         result, _ = detector.get_keypoint(img)
         sequence.append(result.tolist())
     print(len(sequence))
-    return json.dumps(sequence[:30])
+    return json.dumps(sequence[-30:])
 
 def get_key():
     response = requests.post(url, data=datas)
