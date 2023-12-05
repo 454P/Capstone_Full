@@ -20,7 +20,7 @@ TCP_PORT = 8080
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 mp_face_mesh = mp.solutions.face_mesh
-
+'''
 def make_numpy(keypoints):
     key_np_list = []
     keypoint_list = json.loads(keypoints)
@@ -92,20 +92,35 @@ def make_model():
 
     model.compile(optimizer='Adam', loss ='categorical_crossentropy', metrics=['categorical_accuracy'])
     model.load_weights("weight/actionxhand_data0524_0513.h5")
-    #rlf = joblib.load("weight/sentence_model.pkl")
-
-    '''
-    data = pd.read_excel("/content/drive/MyDrive/sign_language/Sign-Language-Translator/sentence_data.xlsx", engine = 'openpyxl')
-    data_x = data.drop(['sentence'], axis = 1)
-    data_y = data['sentence']
-    le = LabelEncoder()
-    le.fit(data['sentence'])
-    '''
 
     return model
 
 def predict_word(sequence):
     model = make_model()
+    restored_sequence = json.loads(sequence)
+    sequence_np = []
+    for elem in restored_sequence:
+        sequence_np.append(np.array(elem))
+
+    res = model.predict(np.expand_dims(sequence_np, axis=0))[0]
+    return actions[np.argmax(res)]
+'''
+
+# Actions that we try to detect
+actions = np.array(['나', '너', '많다', '맞다', '모르다', '수고하다', '슬퍼요', '아니요', '안녕하세요', '인사'])
+# Thirty videos worth of data
+no_sequences = 30
+# Videos are going to be 30 frames in length
+sequence_length = 30
+def make_label():
+    label_map = {label: num for num, label in enumerate(actions)}
+    return label_map
+def make_model(model_type):
+    if model_type == "cnn":
+        model = tf.keras.models.load_model('weight/model_cnn_w10.h5')
+
+    return model
+def predict_word(sequence, model):
     restored_sequence = json.loads(sequence)
     sequence_np = []
     for elem in restored_sequence:
@@ -129,6 +144,7 @@ if __name__=="__main__":
     end_byte = bytes(end_msg,'utf-8')
     clientSocket.send(bytes(end_msg,'utf-8'))
     received_data = b''
+    model = make_model()
     while True:
         while True:
             # 데이터를 최대 BUFFER_SIZE만큼 받음
@@ -142,7 +158,7 @@ if __name__=="__main__":
         received_data = b''
         print(f"data: {keypoint_data}")
         if len(data):
-            word = predict_word(keypoint_data)
+            word = predict_word(keypoint_data, model)
             print(word)
             clientSocket.send(bytes(word,'utf-8'))
             clientSocket.send(bytes(end_msg,'utf-8'))
