@@ -18,7 +18,7 @@ def get_word():
     response = requests.post(url, data=datas)
     api = response.json()['data']['api']
     # json 저장
-    dict = {'type': 2, 'api': api, 'word': '기다리다'}
+    dict = {'type': 2, 'api': api, 'word': '나'}
     return json.dumps(dict)
 
 if __name__=="__main__":

@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import sys
 import io
-import os
+import os, time
 
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
@@ -30,8 +30,8 @@ def VideoWrite(num):
     # fourcc = cv2.VideoWriter_fourcc('D','I','V','X')
 
 
-    directory = os.path.join("data", "인사")  # 새로운 디렉토리 이름
-    file_name = "인사_" + str(num) + ".mp4"
+    directory = os.path.join("data", "많다")  # 새로운 디렉토리 이름
+    file_name = "많다_" + str(num) + ".mp4"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -40,6 +40,7 @@ def VideoWrite(num):
     # 비디오 저장을 위한 객체를 생성해줌.
     out = cv2.VideoWriter(file_path,fourcc,30.0,(width, height))
 
+    pTime = time.time()
     while(True):
         ret, frame = cap.read()
 
@@ -51,7 +52,9 @@ def VideoWrite(num):
         cv2.imshow('video',frame)
         # 비디오 프레임이 제대로 출력되면 해당파일에 프레임을 저장
         out.write(frame)
-
+        cTime = time.time()
+        if cTime - pTime > 3.5:
+            break
         # ESC키값을 입력받으면 녹화종료 메세지와 함께 녹화종료
         k= cv2.waitKey(1)
         if(k == 27):
