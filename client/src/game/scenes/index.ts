@@ -1,4 +1,4 @@
 export { default as Loading } from './Loading';
-export { default as Game } from './Game';
+export { default as Game } from './Quiz';
 export { default as Town } from './Town';
-export { default as LoadingGame } from './LoadingGame';
+export { default as LoadingGame } from './LoadingQuiz';

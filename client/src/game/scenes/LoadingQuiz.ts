@@ -38,6 +38,6 @@ export default class LoadingGame extends Phaser.Scene {
 
   create() {
     this.add.text(20, 20, 'loading...');
-    this.scene.start(scene.game);
+    this.scene.start(scene.quiz);
   }
 }

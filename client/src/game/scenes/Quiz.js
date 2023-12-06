@@ -5,7 +5,7 @@ import { Socket } from 'socket.io-client';
 
 export default class Game extends Phaser.Scene {
   constructor() {
-    super(scene.game);
+    super(scene.quiz);
     this.count = 0;
     this.score = 0;
     this.start = false;
