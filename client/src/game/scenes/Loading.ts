@@ -8,6 +8,8 @@ import characterJson from '@/assets/character/sprites.json';
 import characterImg from '@/assets/character/spritesheet.png';
 import flowerImg from '@/assets/objects/Flowers.png';
 import treeImg from '@/assets/objects/Trees.png';
+import rainParticleImg from '@/assets/particles/rain.png';
+import starParticleImg from '@/assets/particles/star.png';
 import fenceImg from '@/assets/tilesets/Fences.png';
 import grassImg from '@/assets/tilesets/Grass.png';
 import grassHillImg from '@/assets/tilesets/Grass_Hiil.png';
@@ -31,6 +33,9 @@ export default class Loading extends Phaser.Scene {
 
     this.load.tilemapTiledJSON('map', townJson);
     this.load.tilemapTiledJSON('game', gameJson);
+
+    this.load.image('star-particle', starParticleImg);
+    this.load.image('rain-particle', rainParticleImg);
   }
   create() {
     this.add.text(20, 20, 'loading...');
