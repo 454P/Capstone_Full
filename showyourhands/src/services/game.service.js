@@ -86,24 +86,41 @@ async function responseGameEnd(api, words) {
                     status: 400, message: "error on server while parsing review list"
                 }
             });
+        let query_word_list = {};
         for (let i = 0; i < words.length; i++) {
             console.log(words[i]);
             if (words[i].success === true) {
                 user_score += 100;
                 if (review_list[words[i].word]) {
                     review_list[words[i].word].success_count += 1;
+                    query_word_list[words[i].word] = {
+                        id: review_list[words[i].word].id,
+                        success_count: review_list[words[i].word].success_count,
+                        fail_count: review_list[words[i].word].fail_count
+                    }
                 } else {
                     const word_id = await __wordFind(words[i].word);
                     review_list[words[i].word] = {
+                        id: word_id, success_count: 1, fail_count: 0
+                    }
+                    query_word_list[words[i].word] = {
                         id: word_id, success_count: 1, fail_count: 0
                     }
                 }
             } else {
                 if (review_list[words[i].word]) {
                     review_list[words[i].word].fail_count += 1;
+                    query_word_list[words[i].word] = {
+                        id: review_list[words[i].word].id,
+                        success_count: review_list[words[i].word].success_count,
+                        fail_count: review_list[words[i].word].fail_count
+                    }
                 } else {
                     const word_id = await __wordFind(words[i].word);
                     review_list[words[i].word] = {
+                        id: word_id, success_count: 0, fail_count: 1
+                    };
+                    query_word_list[words[i].word] = {
                         id: word_id, success_count: 0, fail_count: 1
                     };
                 }
@@ -116,18 +133,18 @@ async function responseGameEnd(api, words) {
             DO UPDATE SET success_count = $3, fail_count = $4;
         `;
 
-        for (let key in review_list) {
-            await connection.query(update_query, [user_id, review_list[key].id, review_list[key].success_count, review_list[key].fail_count])
+        console.log(query_word_list);
+        for (let key in query_word_list) {
+            await connection.query(update_query, [user_id, query_word_list[key].id, query_word_list[key].success_count, query_word_list[key].fail_count])
                 .then(r => {
                     console.log(r);
                 })
                 .catch(e => {
                     console.log(e);
                     result = {
-                        status: 400, message: "error on server while updating review list"
+                        status: 400, message: "error on server while updating user sign stat"
                     }
                 });
-
         }
         const update_score_query = `
             UPDATE capstone."user"
