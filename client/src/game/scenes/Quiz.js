@@ -1,7 +1,7 @@
+import Button from '../objects/Button';
 import { emitter, scene } from './constants';
 import axios from 'axios';
 import Phaser from 'phaser';
-import { Socket } from 'socket.io-client';
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -25,8 +25,8 @@ export default class Game extends Phaser.Scene {
 
   create() {
     // background map
-    const map = this.make.tilemap({ key: 'game' });
-
+    const map = this.make.tilemap({ key: scene.quiz });
+    const { width, height } = this.scale;
     const grass = map.addTilesetImage('Grass_Hill', 'grass_hill_tiles');
     const water = map.addTilesetImage('Water', 'water_tiles');
     const fence = map.addTilesetImage('Fence', 'fence_tiles');
@@ -37,14 +37,13 @@ export default class Game extends Phaser.Scene {
     tilesets && map.createLayer('Grass', tilesets, 0, 0);
     tilesets && map.createLayer('Object', tilesets, 0, 0);
 
-    // timer
-    // this.timer = this.add.text(50, 50, '', { fontFamily: 'MapleStory', fontSize: 30, fontStyle: 'bold' });
-    // this.timedEvent = this.time.delayedCall(5000, this.onEvent, [], this);
-
     // quiz
-    // this.quiz = this.quizArray[this.idx];
-    this.quizText = this.add.text(400, 50, '', { fontFamily: 'MapleStory', fontSize: 80, fontStyle: 'bold' });
-    this.scoreText = this.add.text(1000, 50, '', { fontFamily: 'MapleStory', fontSize: 60, fontStyle: 'bold' });
+    this.quizText = this.add
+      .text(width / 2, 100, '', { fontFamily: 'MapleStory', fontSize: 80, fontStyle: 'bold' })
+      .setOrigin(0.5);
+    this.scoreText = this.add
+      .text(width - 200, 100, '', { fontFamily: 'MapleStory', fontSize: 60, fontStyle: 'bold', color: '#4B280A' })
+      .setOrigin(0.5);
     this.answer = '';
     this.answerText = this.add.text(400, 50, '', {
       fontFamily: 'MapleStory',
@@ -61,14 +60,15 @@ export default class Game extends Phaser.Scene {
     });
 
     // button
-    this.startButton = this.add
-      .text(500, 200, 'START', {
-        fontFamily: 'MapleStory',
-        fontSize: 90,
-        fontStyle: 'bold',
-      })
-      .setInteractive()
-      .on('pointerdown', this.startQuiz, this);
+    this.startButton = new Button(this, width / 2, height / 2, '시작', 90, this.startQuiz);
+    // this.startButton = this.add
+    //   .text(500, 200, 'START', {
+    //     fontFamily: 'MapleStory',
+    //     fontSize: 90,
+    //     fontStyle: 'bold',
+    //   })
+    //   .setInteractive()
+    //   .on('pointerdown', this.startQuiz, this);
 
     // this.nextButton = this.add
     //   .text(100, 100, 'NEXT', {
