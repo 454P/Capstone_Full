@@ -119,6 +119,8 @@ def make_label():
 def make_model(model_type):
     if model_type == "cnn":
         model = tf.keras.models.load_model('weight/model_cnn_w10.h5')
+    elif model_type == "bigru":
+        model = tf.keras.models.load_model('weight/model_w20_bigru2.h5')
 
     return model
 def predict_word(sequence, model):
@@ -145,7 +147,7 @@ if __name__=="__main__":
     end_byte = bytes(end_msg,'utf-8')
     clientSocket.send(bytes(end_msg,'utf-8'))
     received_data = b''
-    model = make_model('cnn')
+    model = make_model('bigru')
     while True:
         while True:
             # 데이터를 최대 BUFFER_SIZE만큼 받음
