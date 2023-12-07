@@ -13,6 +13,7 @@ import time, io, os, time, sys, natsort, random, math
 import json
 from socket import *
 import requests
+import tensorflow as tf
 datas = {'id': 'asap0123', 'password': 'asap0123!'}
 HOST = "49.142.76.124"
 TCP_PORT = 8080
