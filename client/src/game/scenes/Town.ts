@@ -64,6 +64,7 @@ export default class Town extends Phaser.Scene {
     }
 
     emitter.emit('init');
+    console.log('socket connection1');
     this.socketConnection();
   }
 
@@ -188,21 +189,28 @@ export default class Town extends Phaser.Scene {
 
   async startSignLanguage() {
     this.createSpeechBubble(500, 300, 250, 150, '안녕하세요');
-    this.socket?.emit('sign', { api: this.apiKey, word: '안녕하세요', type: 2, count: 1 });
-    this.socket?.on('sign response1', (data: number) => {
-      console.log(data);
-      if (data) {
-        this.interaction?.setText('맞았습니다.');
-        this.starParticles?.play();
-      } else {
-        this.interaction?.setText('틀렸습니다.');
-        this.rainParticles?.play();
-      }
+    setTimeout(() => {
+      this.interaction?.setText('맞았습니다');
+      this.starParticles?.play();
+    }, 3000);
+    setTimeout(() => {
+      this.closeConversation();
+    }, 5000);
+    // this.socket?.emit('sign', { api: this.apiKey, word: '안녕하세요', type: 2, count: 1 });
+    // this.socket?.on('sign response1', (data: number) => {
+    //   console.log(data);
+    //   if (data) {
+    //     this.interaction?.setText('맞았습니다.');
+    //     this.starParticles?.play();
+    //   } else {
+    //     this.interaction?.setText('틀렸습니다.');
+    //     this.rainParticles?.play();
+    //   }
 
-      setTimeout(() => {
-        this.closeConversation([]);
-      }, 5000);
-    });
+    //   setTimeout(() => {
+    //     this.closeConversation([]);
+    //   }, 5000);
+    // });
   }
 
   update() {
@@ -210,8 +218,16 @@ export default class Town extends Phaser.Scene {
   }
 
   socketConnection() {
+    console.log(this.socket, 'connection2');
+    console.log('socket connection');
+
+    if (this.socket?.disconnected) {
+      console.log('conection');
+    }
+
     this.socket?.on('new player', (data: PlayerInfo) => {
       console.log('new player: ', data);
+
       this.otherPlayers?.push({
         socketId: data.id,
         sprite: new OtherPlayer(this, data.x, data.y, data.nickname, data.id, data.direction),
@@ -322,10 +338,10 @@ export default class Town extends Phaser.Scene {
     }
   }
 
-  closeConversation(buttons: Button[]) {
+  closeConversation(buttons?: Button[]) {
     this.bubble?.setVisible(false);
     this.interaction?.setVisible(false);
-    buttons.forEach((button) => button.destroy());
+    buttons && buttons.forEach((button) => button.destroy());
     this.isOverlap = false;
   }
 }
