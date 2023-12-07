@@ -1,9 +1,10 @@
+import Button from '../objects/Button';
+import Particles from '../objects/Particles';
 import NPC from '../players/NPC';
 import OtherPlayer from '../players/OtherPlayer';
 import Player from '../players/Player';
 import { PlayerInfo, spriteInfo, spriteInfoInterface } from '../players/constants';
 import { emitter, scene } from './constants';
-import axios from 'axios';
 import Phaser from 'phaser';
 import { Socket } from 'socket.io-client';
 
@@ -25,15 +26,17 @@ export default class Town extends Phaser.Scene {
   otherPlayers: otherPlayerInfo[];
   socket?: Socket;
   nickname?: string;
-  npc?: Phaser.Physics.Arcade.Sprite;
+  npc1?: Phaser.Physics.Arcade.Sprite;
+  npc2?: Phaser.Physics.Arcade.Sprite;
   isOverlap: boolean;
   interaction?: Phaser.GameObjects.Text;
   conversation: string;
-  nextButton?: Phaser.GameObjects.Text;
-  closeButton?: Phaser.GameObjects.Text;
   quizButton?: Phaser.GameObjects.Text;
   bubble?: Phaser.GameObjects.Graphics;
   apiKey?: string;
+  particleButton?: Phaser.GameObjects.Text;
+  rainParticles?: Particles;
+  starParticles?: Particles;
 
   constructor() {
     super(scene.town);
@@ -57,13 +60,27 @@ export default class Town extends Phaser.Scene {
 
   create() {
     // background
-    const map = this.make.tilemap({ key: 'map' });
+    const map = this.make.tilemap({ key: 'tmp' });
 
-    const grass = map.addTilesetImage('Grass', 'grass_tiles');
+    const fences = map.addTilesetImage('Fences', 'fence_tiles');
+    const flowers = map.addTilesetImage('Flowers', 'flower_tiles');
+    const grass = map.addTilesetImage('Grass_Hill', 'grass_hill_tiles');
+    const house = map.addTilesetImage('Houses', 'house_tiles');
+    const plant = map.addTilesetImage('Plants', 'plant_tiles');
+    const slope = map.addTilesetImage('Slopes', 'slope_tiles');
+    const soil = map.addTilesetImage('Soil', 'soil_tiles');
+    const tree = map.addTilesetImage('Trees', 'tree_tiles');
     const water = map.addTilesetImage('Water', 'water_tiles');
 
     const waterLayer = water && map.createLayer('Water', water, 0, 0);
-    const landLayer = grass && map.createLayer('Land', grass, 0, 0);
+    const grassLayer = grass && map.createLayer('Grass', grass, 0, 0);
+    const islandTileSet = slope && grass;
+    const isLandLayer = islandTileSet && map.createLayer('Island', islandTileSet, 0, 0);
+    const farmLayer = soil && map.createLayer('Farm', soil, 0, 0);
+    const objectTileSet = fences && flowers && house && plant && tree && [fences, flowers, house, plant, tree];
+    const objectLayer = objectTileSet && map.createLayer('Object', objectTileSet);
+
+    const { width, height } = this.scale;
 
     //player
     spriteInfo.forEach((info: spriteInfoInterface) => {
@@ -84,8 +101,8 @@ export default class Town extends Phaser.Scene {
     if (this.nickname && this.socket) {
       this.player = new Player(
         this,
-        Math.floor(Math.random() * 500),
-        Math.floor(Math.random() * 500),
+        Math.floor(Math.random() * 10) + width / 2,
+        Math.floor(Math.random() * 10) + height / 2,
         this.nickname,
         this.socket,
       );
@@ -98,21 +115,51 @@ export default class Town extends Phaser.Scene {
       frameRate: 4,
       repeat: -1,
     });
-    this.npc = new NPC(this, 100, 100, 'npc1');
-    this.physics.add.group(this.npc);
+    this.npc1 = new NPC(this, 500, 500, 'npc1');
+    this.npc2 = new NPC(this, 800, 600, 'QUIZ');
+    this.physics.add.group([this.npc1, this.npc2]);
     this.physics.add.group(this.player);
     this.physics.add.group(this.interaction);
-    this.interaction = this.add.text(0, 0, this.conversation);
-    this.nextButton = this.add.text(0, 0, '');
-    this.nextButton.setVisible(false);
-    this.closeButton = this.add.text(0, 0, '');
-    this.closeButton.setVisible(false);
-    this.quizButton = this.add.text(300, 300, 'START QUIZ').setInteractive().on('pointerdown', this.startQuiz, this);
-    this.player && this.physics.add.overlap(this.npc, this.player, this.npcInteraction, undefined, this);
+    this.interaction = this.add.text(0, 0, '');
+    this.player && this.physics.add.overlap(this.npc1, this.player, this.npcInteraction, undefined, this);
+    this.player && this.physics.add.overlap(this.npc2, this.player, this.startQuiz, undefined, this);
+
+    // particles
+    this.rainParticles = new Particles({ scene: this, type: 'rain' });
+    this.starParticles = new Particles({ scene: this, type: 'star' });
   }
 
   startQuiz() {
-    emitter.emit('start quiz');
+    if (!this.isOverlap) {
+      this.isOverlap = true;
+      const soloQuizButton = new Button(this, 0, 0, '1 player', 20, () => {
+        this.scene.start(scene.quiz);
+        emitter.emit('start quiz');
+      });
+      const multiQuizButton = new Button(this, 0, 0, '2 player', 20);
+      const closeButton = new Button(this, 0, 0, 'close', 20);
+      closeButton.setPointerDownFunction(() => {
+        this.closeConversation([soloQuizButton, multiQuizButton, closeButton]);
+      });
+      this.createSpeechBubble(800, 350, 400, 200, '퀴즈를 시작하시겠어요?', [
+        soloQuizButton,
+        multiQuizButton,
+        closeButton,
+      ]);
+    }
+  }
+
+  npcInteraction() {
+    if (!this.isOverlap) {
+      this.isOverlap = true;
+      const nextButton = new Button(this, 0, 0, 'next', 20, this.startSignLanguage);
+      const closeButton = new Button(this, 0, 0, 'close', 20);
+
+      closeButton.setPointerDownFunction(() => {
+        this.closeConversation([nextButton, closeButton]);
+      });
+      this.createSpeechBubble(500, 300, 250, 150, '안녕하세요', [nextButton, closeButton]);
+    }
   }
 
   async startSignLanguage() {
@@ -121,20 +168,18 @@ export default class Town extends Phaser.Scene {
     this.socket?.emit('sign', { api: this.apiKey, word: '이거', type: 2, count: 1 });
     this.socket?.on('sign response1', (data: number) => {
       console.log(data);
-      if (data) this.interaction?.setText('  O');
-      else this.interaction?.setText('  X');
+      if (data) {
+        this.interaction?.setText('  O');
+        this.starParticles?.play();
+      } else {
+        this.interaction?.setText('  X');
+        this.rainParticles?.play();
+      }
     });
   }
 
-  npcInteraction() {
-    if (!this.isOverlap) {
-      this.isOverlap = true;
-      this.createSpeechBubble(70, 400, 250, 100, '안녕하세요.');
-    }
-  }
-
   update() {
-    this.player?.update();
+    this.player?.update(false);
   }
 
   socketConnection() {
@@ -172,7 +217,7 @@ export default class Town extends Phaser.Scene {
     });
   }
 
-  createSpeechBubble(x: number, y: number, width: number, height: number, quote: string) {
+  createSpeechBubble(x: number, y: number, width: number, height: number, quote: string, buttons?: Button[]) {
     const bubbleWidth = width;
     const bubbleHeight = height;
     const bubblePadding = 10;
@@ -213,62 +258,39 @@ export default class Town extends Phaser.Scene {
     this.bubble.lineBetween(point1X, point1Y, point3X, point3Y);
 
     this.interaction = this.add.text(0, 0, quote, {
-      fontFamily: 'MapleStory',
-      fontSize: 20,
       color: '#000000',
       align: 'center',
+      fontSize: '20px',
       wordWrap: { width: bubbleWidth - bubblePadding * 2 },
     });
 
-    this.nextButton = this.add
-      .text(0, 0, 'START', {
-        fontFamily: 'Arial',
-        fontSize: 15,
-        color: '#000000',
-        align: 'center',
-        wordWrap: { width: bubbleWidth - bubblePadding * 2 },
-      })
-      .setInteractive()
-      .on('pointerdown', this.startSignLanguage, this);
-
-    this.closeButton = this.add
-      .text(0, 0, 'CLOSE', {
-        fontFamily: 'Arial',
-        fontSize: 15,
-        color: '#000000',
-        align: 'center',
-        wordWrap: { width: bubbleWidth - bubblePadding * 2 },
-      })
-      .setInteractive()
-      .on('pointerdown', this.closeConversation, this);
-
     const b = this.interaction.getBounds();
     this.interaction.setPosition(
-      this.bubble.x + bubbleWidth / 2 - b.width / 2,
-      this.bubble.y + bubbleHeight / 2 - b.height / 2,
+      this.bubble.x + bubbleWidth / 2 - b.centerX,
+      buttons
+        ? this.bubble.y + bubbleHeight / (2 ** (buttons.length + 1) - 1) - b.centerY + 5
+        : this.bubble.y + bubbleHeight / 2 - b.centerY,
     );
 
-    const c = this.nextButton.getBounds();
-    this.nextButton.setPosition(
-      this.bubble.x + bubbleWidth / 2 - c.width / 2 - 50,
-      this.bubble.y + bubbleHeight / 2 - c.height / 2 + 30,
-    );
-    this.nextButton.setVisible(true);
-
-    const d = this.closeButton.getBounds();
-    this.closeButton.setPosition(
-      this.bubble.x + bubbleWidth / 2 - d.width / 2 + 50,
-      this.bubble.y + bubbleHeight / 2 - d.height / 2 + 30,
-    );
-    this.closeButton.setVisible(true);
+    if (buttons) {
+      buttons.forEach((button, idx) => {
+        const bound = button.getBounds();
+        this.bubble &&
+          button.setPosition(
+            this.bubble.x + bubbleWidth / 2 - bound.centerX,
+            this.bubble.y +
+              ((buttons.length + 1) * (idx + 1) * bubbleHeight) / (2 ** (buttons.length + 1) - 1) -
+              bound.centerY +
+              5,
+          );
+      });
+    }
   }
 
-  closeConversation() {
-    console.log('closed');
+  closeConversation(buttons: Button[]) {
     this.bubble?.setVisible(false);
     this.interaction?.setVisible(false);
-    this.nextButton?.setVisible(false);
-    this.closeButton?.setVisible(false);
+    buttons.forEach((button) => button.destroy());
     this.isOverlap = false;
   }
 }
