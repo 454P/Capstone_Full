@@ -8,7 +8,7 @@ module.exports = function () {
     const server = require("http").Server(app);
     const io = require("socket.io")(server, {
         cors: {
-            origin: "http://49.142.76.124:4549",
+            origin: "*",
             methods: ["GET", "POST"],
             credentials: true,
         },
@@ -159,7 +159,7 @@ module.exports = function () {
 
             var options = {
                 // 접속 정보 설정
-                port: 8080,
+                port: "4549",
                 host: "49.142.76.124",
             };
 
