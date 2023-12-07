@@ -62,7 +62,7 @@ if __name__=="__main__":
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((HOST, TCP_PORT))
     clientSocket.send(byte_data)
-    end_msg = "0000000000"
+    end_msg = "0000000000" + "\0"
     clientSocket.send(bytes(end_msg,'utf-8'))
 
     while True:
