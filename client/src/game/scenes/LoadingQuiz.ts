@@ -10,7 +10,7 @@ import flowerImg from '@/assets/objects/Flowers.png';
 import treeImg from '@/assets/objects/Trees.png';
 import fenceImg from '@/assets/tilesets/Fences.png';
 import grassImg from '@/assets/tilesets/Grass.png';
-import grassHillImg from '@/assets/tilesets/Grass_Hiil.png';
+import grassHillImg from '@/assets/tilesets/Grass_Hill.png';
 import waterImg from '@/assets/tilesets/Water.png';
 
 export default class LoadingGame extends Phaser.Scene {
@@ -33,11 +33,11 @@ export default class LoadingGame extends Phaser.Scene {
     this.load.image('flower_tiles', flowerImg);
     this.load.image('tree_tiles', treeImg);
 
-    this.load.tilemapTiledJSON('game', gameJson);
+    this.load.tilemapTiledJSON('quiz', gameJson);
   }
 
   create() {
     this.add.text(20, 20, 'loading...');
-    this.scene.start(scene.game);
+    this.scene.start(scene.quiz);
   }
 }

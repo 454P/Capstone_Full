@@ -39,19 +39,19 @@ function TownPage() {
   }, [mySocket]);
 
   return (
-    <div>
+    <TownContainer>
       <MultiVideo />
-      <RowContainer>
-        <div ref={ref} />
-        <Chat />
-      </RowContainer>
-    </div>
+      <div ref={ref} />
+      <Chat />
+    </TownContainer>
   );
 }
 
 export default TownPage;
 
-const RowContainer = styled.div`
+const TownContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 `;

@@ -3,8 +3,8 @@ import { Game, LoadingGame } from './scenes';
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   pixelArt: true,
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: 1280,
+  height: 800,
   physics: {
     default: 'arcade',
     arcade: {

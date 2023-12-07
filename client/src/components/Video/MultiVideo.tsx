@@ -222,6 +222,10 @@ const VideoContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
+
+  position: absolute;
+  top: 0px;
+  z-index: 1;
 `;
 
 const OtherVideoContainer = styled.div`

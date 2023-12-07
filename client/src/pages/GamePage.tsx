@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import styled from '@emotion/styled';
 import gameConfig from '@/game/gameConfig';
 import { emitter } from '@/game/scenes/constants';
 import { socketState } from '@/states';
@@ -21,7 +22,20 @@ function GamePage() {
       game.destroy(true);
     };
   }, []);
-  return <div ref={ref} />;
+  return (
+    <GameContainer>
+      <div ref={ref} />
+    </GameContainer>
+  );
 }
 
 export default GamePage;
+
+const GameContainer = styled.div`
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+`;
