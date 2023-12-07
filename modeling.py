@@ -16,7 +16,7 @@ import requests
 import tensorflow as tf
 datas = {'id': 'asap0123', 'password': 'asap0123!'}
 HOST = "49.142.76.124"
-TCP_PORT = 8080
+TCP_PORT = 4549
 
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils

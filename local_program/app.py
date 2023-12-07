@@ -9,7 +9,7 @@ from socket import *
 url = 'http://49.142.76.124:8000/login'
 datas = {'id': 'asap0123', 'password': 'asap0123!'}
 HOST = "49.142.76.124"
-TCP_PORT = 8080
+TCP_PORT = 4549
 
 detector = vc.keypointDetector()
 cap = cv2.VideoCapture(0)
