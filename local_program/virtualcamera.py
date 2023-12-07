@@ -12,6 +12,7 @@ class keypointDetector():
         self.mp_face_mesh = mp.solutions.face_mesh
 
     def mediapipe_detection(self, image, model):
+        print(1)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
         image.flags.writeable = False  # 이미지 수정 불가
         results = model.process(image)  # 모델을 사용해 입력 이미지에 대한 예측 수행
@@ -31,7 +32,10 @@ class keypointDetector():
     
     def get_keypoint(self, frame, draw=True):
         with self.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+            print(frame.shape)
+            print(holistic)
             image, results = self.mediapipe_detection(frame, holistic)
+            print(2)
             keypoints = self.extract_keypoints(results)
         return keypoints, image
 

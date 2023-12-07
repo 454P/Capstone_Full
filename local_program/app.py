@@ -43,6 +43,7 @@ def record_video():
     
     for img in images:
         result, _ = detector.get_keypoint(img)
+        print(f"result: {result}")
         sequence.append(result.tolist())
     print(len(sequence))
     return json.dumps(sequence[-30:])
