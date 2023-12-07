@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 // simple express server
 const port = process.env.PORT || 8000;
 const app = express();
-
+app.use(express.static('public'));
 
 
 const syhRouter = require('./src/routes/syh.route');
