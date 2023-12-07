@@ -138,7 +138,7 @@ export default class Quiz extends Phaser.Scene {
       this.socket.on('sign response1', async (data) => {
         console.log(data);
         console.log('startSign', data);
-        await this.showAnswer(data, response.data.word);
+        await this.showAnswer(data, this.quizs[this.count - 1]);
       });
     } catch (error) {
       console.log(error);
@@ -180,7 +180,7 @@ export default class Quiz extends Phaser.Scene {
 
         this.socket.on(`sign response${this.count}`, async (data) => {
           console.log('nextSign', data);
-          await this.showAnswer(data, response.data.word);
+          await this.showAnswer(data, this.quizs[this.count - 1]);
           // this.nextQuiz();
 
           this.socket.off(`sign response${this.count}`);
