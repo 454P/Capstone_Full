@@ -148,6 +148,10 @@ async function responseGameEnd(api, words) {
                 });
 
         }
+        result = {
+            status: 200,
+            message: "gameEnd success"
+        }
     } catch (err) {
         console.error('Error on gameEnd', err.message);
         result = {
