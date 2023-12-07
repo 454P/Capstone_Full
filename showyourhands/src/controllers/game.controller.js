@@ -23,7 +23,19 @@ async function gameNextRequest(req, res, next) {
     }
 }
 
+async function gameEndRequest(req, res, next) {
+    try {
+        console.log(req.body);
+        const result = await gameService.responseGameEnd(req.body.api, req.body.words);
+        res.status(result.status).json(result);
+    } catch (err) {
+        console.error('Error on game end', err.message);
+        next(err)
+    }
+}
+
 module.exports = {
     gameStartRequest,
-    gameNextRequest
+    gameNextRequest,
+    gameEndRequest
 }
