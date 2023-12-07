@@ -192,10 +192,10 @@ export default class Town extends Phaser.Scene {
     setTimeout(() => {
       this.interaction?.setText('맞았습니다');
       this.starParticles?.play();
-    }, 3000);
+    }, 5000);
     setTimeout(() => {
       this.closeConversation();
-    }, 5000);
+    }, 8000);
     // this.socket?.emit('sign', { api: this.apiKey, word: '안녕하세요', type: 2, count: 1 });
     // this.socket?.on('sign response1', (data: number) => {
     //   console.log(data);
