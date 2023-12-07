@@ -15,6 +15,12 @@ async function responseReview(api) {
     `;
     await connection.query(query, [api])
         .then(r => {
+            if (r.rows.length === 0) {
+                return {
+                    status: 400,
+                    message: "User does not exist"
+                }
+            }
             for (let i = 0; i < r.rows.length; i++) {
                 words.push({
                     word: r.rows[i].sign_language_word,
