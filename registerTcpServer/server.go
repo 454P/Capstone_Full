@@ -214,7 +214,7 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 
 func main() {
 	userMap := make(map[string]net.Conn)
-	socket, err := net.Listen("tcp", ":8080")
+	socket, err := net.Listen("tcp", ":4549")
 	if err != nil {
 		fmt.Println("Fail to open socket: ", err)
 	}
