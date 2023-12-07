@@ -199,10 +199,10 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 				continue
 			}
 		} else {
-			i += 1
-			fmt.Println("Incorrect")
 			var incorrectJson WebClient
+			i += 1
 			if i%5 == 2 {
+				fmt.Println("Incorrect")
 				incorrectJson = WebClient{
 					Type:  0,
 					Api:   clientJson.Api,
@@ -210,6 +210,7 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 					Count: clientJson.Count,
 				}
 			} else {
+				fmt.Println("Correct")
 				incorrectJson = WebClient{
 					Type:  1,
 					Api:   clientJson.Api,
