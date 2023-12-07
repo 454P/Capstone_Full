@@ -6,6 +6,7 @@ interface customSocket {
   socket: Socket;
   isReady: boolean;
   apiKey: string;
+  score: number;
 }
 
 export const socketState = atom<customSocket>({
@@ -15,6 +16,7 @@ export const socketState = atom<customSocket>({
     socket: io('http://49.142.76.124:45491'),
     isReady: false,
     apiKey: '',
+    score: 0,
   },
   dangerouslyAllowMutability: true,
 });

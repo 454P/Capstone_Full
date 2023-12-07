@@ -28,6 +28,7 @@ export default class Town extends Phaser.Scene {
   nickname?: string;
   npc1?: Phaser.Physics.Arcade.Sprite;
   npc2?: Phaser.Physics.Arcade.Sprite;
+  npc3?: Phaser.Physics.Arcade.Sprite;
   isOverlap: boolean;
   interaction?: Phaser.GameObjects.Text;
   conversation: string;
@@ -46,14 +47,22 @@ export default class Town extends Phaser.Scene {
   }
 
   init() {
+    console.log(localStorage.getItem('apiKey'), this.socket);
+    const apik = localStorage.getItem('apiKey');
+    // if (!apik) {
+    //   this.socketConnection();
+    // }
+
     if (!this.socket) {
       emitter.on('initPlayer', (mySocket: customSocket) => {
-        console.log(mySocket);
+        console.log('initPlayer', mySocket);
         this.socket = mySocket.socket;
         this.nickname = mySocket.nickname;
         this.apiKey = mySocket.apiKey;
+        localStorage.setItem('apiKey', mySocket.apiKey);
       });
     }
+
     emitter.emit('init');
     this.socketConnection();
   }
@@ -117,64 +126,82 @@ export default class Town extends Phaser.Scene {
     });
     this.npc1 = new NPC(this, 500, 500, 'npc1');
     this.npc2 = new NPC(this, 800, 600, 'QUIZ');
-    this.physics.add.group([this.npc1, this.npc2]);
+    this.npc3 = new NPC(this, 900, 400, 'REVIEW');
+    this.physics.add.group([this.npc1, this.npc2, this.npc3]);
     this.physics.add.group(this.player);
     this.physics.add.group(this.interaction);
     this.interaction = this.add.text(0, 0, '');
     this.player && this.physics.add.overlap(this.npc1, this.player, this.npcInteraction, undefined, this);
     this.player && this.physics.add.overlap(this.npc2, this.player, this.startQuiz, undefined, this);
-
+    this.player && this.physics.add.overlap(this.npc3, this.player, this.startReview, undefined, this);
     // particles
     this.rainParticles = new Particles({ scene: this, type: 'rain' });
     this.starParticles = new Particles({ scene: this, type: 'star' });
+  }
+
+  startReview() {
+    if (!this.isOverlap) {
+      this.isOverlap = true;
+      const startButton = new Button(this, 0, 0, 'start', 20, () => {
+        emitter.emit('start review');
+      });
+      const closeButton = new Button(this, 0, 0, 'close', 20);
+      closeButton.setPointerDownFunction(() => {
+        this.closeConversation([startButton, closeButton]);
+      });
+      this.createSpeechBubble(900, 200, 250, 150, '복습하시겠습니까??', [startButton, closeButton]);
+    }
   }
 
   startQuiz() {
     if (!this.isOverlap) {
       this.isOverlap = true;
       const soloQuizButton = new Button(this, 0, 0, '1 player', 20, () => {
-        this.scene.start(scene.quiz);
         emitter.emit('start quiz');
+        this.scene.pause();
+        this.scene.start(scene.quiz);
       });
-      const multiQuizButton = new Button(this, 0, 0, '2 player', 20);
       const closeButton = new Button(this, 0, 0, 'close', 20);
       closeButton.setPointerDownFunction(() => {
-        this.closeConversation([soloQuizButton, multiQuizButton, closeButton]);
+        this.closeConversation([soloQuizButton, closeButton]);
       });
-      this.createSpeechBubble(800, 350, 400, 200, '퀴즈를 시작하시겠어요?', [
-        soloQuizButton,
-        multiQuizButton,
-        closeButton,
-      ]);
+      this.createSpeechBubble(800, 350, 400, 150, '퀴즈를 시작하시겠어요?', [soloQuizButton, closeButton]);
     }
   }
 
   npcInteraction() {
     if (!this.isOverlap) {
       this.isOverlap = true;
-      const nextButton = new Button(this, 0, 0, 'next', 20, this.startSignLanguage);
       const closeButton = new Button(this, 0, 0, 'close', 20);
+      const nextButton = new Button(this, 0, 0, 'next', 20);
 
       closeButton.setPointerDownFunction(() => {
         this.closeConversation([nextButton, closeButton]);
+      });
+      nextButton.setPointerDownFunction(() => {
+        this.closeConversation([nextButton, closeButton]);
+        this.startSignLanguage();
       });
       this.createSpeechBubble(500, 300, 250, 150, '안녕하세요', [nextButton, closeButton]);
     }
   }
 
   async startSignLanguage() {
-    console.log('clicked');
-
-    this.socket?.emit('sign', { api: this.apiKey, word: '이거', type: 2, count: 1 });
+    this.createSpeechBubble(500, 300, 250, 150, '안녕하세요');
+    this.socket?.emit('sign', { api: this.apiKey, word: '안녕하세요', type: 2, count: 1 });
     this.socket?.on('sign response1', (data: number) => {
       console.log(data);
       if (data) {
-        this.interaction?.setText('  O');
+        this.interaction?.setText('맞았습니다.');
         this.starParticles?.play();
       } else {
-        this.interaction?.setText('  X');
+        this.interaction?.setText('틀렸습니다.');
         this.rainParticles?.play();
       }
+
+      setTimeout(() => {
+        this.closeConversation([]);
+      }, 5000);
     });
   }
 
@@ -212,6 +239,14 @@ export default class Town extends Phaser.Scene {
       if (data) {
         this.otherPlayers.forEach((otherPlayer) => {
           if (otherPlayer.socketId === data.id) otherPlayer.sprite.update(data.x, data.y, data.direction);
+        });
+      }
+    });
+
+    this.socket?.on('remove other player', (data) => {
+      if (data) {
+        this.otherPlayers.forEach((otherPlayer) => {
+          if (otherPlayer.socketId === data.id) otherPlayer.sprite.update(0, 0, 'front', true);
         });
       }
     });

@@ -1,16 +1,16 @@
-import { waitFor } from '@testing-library/react';
 import Button from '../objects/Button';
 import Particles from '../objects/Particles';
 import { emitter, scene } from './constants';
 import axios from 'axios';
 import Phaser from 'phaser';
 
-export default class Game extends Phaser.Scene {
+export default class Quiz extends Phaser.Scene {
   constructor() {
     super(scene.quiz);
     this.count = 0;
     this.score = 0;
     this.start = false;
+    this.end = false;
   }
 
   init() {
@@ -28,7 +28,9 @@ export default class Game extends Phaser.Scene {
   create() {
     // background map
     const map = this.make.tilemap({ key: scene.quiz });
-    const { width, height } = this.scale;
+    // const { width, height } = {1280, 800};
+    const width = 1280;
+    const height = 800;
     const grass = map.addTilesetImage('Grass_Hill', 'grass_hill_tiles');
     const water = map.addTilesetImage('Water', 'water_tiles');
     const fence = map.addTilesetImage('Fence', 'fence_tiles');
@@ -56,6 +58,7 @@ export default class Game extends Phaser.Scene {
 
     // video
     this.video = this.add.video(300, 200).setOrigin(0, 0).setVisible(true);
+    // this.videoIncorrect = this.add.video(300, 200).setOrigin(0, 0).setVisible(true);
     navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
       this.video?.loadMediaStream(stream, false);
       this.video?.play(true);
@@ -63,6 +66,29 @@ export default class Game extends Phaser.Scene {
 
     // button
     this.startButton = new Button(this, width / 2, height / 2, '시작', 90, this.startQuiz);
+    this.closeButton = this.add
+      .text(width / 2, height / 2 + 200, '종료', {
+        fontFamily: 'MapleStory',
+        fontSize: 90,
+        fontStyle: 'bold',
+        color: 'white',
+      })
+      .setOrigin(0.5)
+      .setInteractive()
+      .on('pointerdown', this.endQuiz, this)
+      .setVisible(true);
+
+    this.incorrects = [];
+    this.incorrectsText = this.add
+      .text(width / 2, 250, this.incorrects, {
+        fontFamily: 'MapleStory',
+        fontSize: 40,
+        fontStyle: 'bold',
+        color: 'red',
+      })
+      .setOrigin(0.5)
+      .setVisible(false);
+    this.endScore = 0;
 
     // particles
     this.rainParticles = new Particles({ scene: this, type: 'rain' });
@@ -73,9 +99,15 @@ export default class Game extends Phaser.Scene {
     this.words = [];
   }
 
+  endQuiz() {
+    emitter.emit('end quiz', this.endScore);
+    this.scene.pause();
+  }
+
   showAnswer(answer, word) {
     if (answer === 1) {
       this.quizText.setText('맞았습니다.');
+      this.score += 100;
       this.starParticles.play();
       this.words.push({ word: word, success: true });
     } else {
@@ -86,7 +118,7 @@ export default class Game extends Phaser.Scene {
 
     setTimeout(() => {
       this.nextQuiz();
-    }, 4000);
+    }, 5000);
   }
 
   async startQuiz() {
@@ -100,17 +132,9 @@ export default class Game extends Phaser.Scene {
       this.socket?.emit('sign', { api: this.apiKey, word: response.data.word, type: 2, count: this.count });
 
       this.socket.on('sign response1', async (data) => {
+        console.log(data);
         console.log('startSign', data);
-        this.start = false;
         await this.showAnswer(data, response.data.word);
-        // this.nextQuiz();
-        // if (data === 1) {
-        //   this.score += 100;
-        //   this.starParticles.play();
-        // } else {
-        //   this.rainParticles.play();
-        // }
-        // this.nextQuiz();
       });
     } catch (error) {
       console.log(error);
@@ -125,36 +149,39 @@ export default class Game extends Phaser.Scene {
 
       // 끝났을 떄
       if (response.data.status === 201) {
-        let incorrects = '끝!\n';
+        const incorrects = [];
         this.words.forEach((problem) => {
-          if (problem.success === false) incorrects += problem.word + '\n';
+          if (problem.success === false) incorrects.push(problem.word);
         });
-        this.quizText.setText(incorrects);
+        this.quizText.setText('끝!');
+        this.incorrectsText.setText(incorrects).setVisible(true);
+
         this.start = false;
-        //
-        const response = await axios.post('http://49.142.76.124:8000/game/end', {
+        this.end = true;
+
+        const response2 = await axios.post('http://49.142.76.124:8000/game/end', {
           api: this.apiKey,
           words: this.words,
         });
-        console.log(this.words);
 
-        console.log('End', response);
-        return;
+        console.log('End', response2);
+        this.endScore = response2.data.score;
+        this.closeButton.setVisible(true);
+      } else {
+        this.quizText.setText(response.data.word);
+        this.count = response.data.count;
+        this.start = true;
+
+        this.socket?.emit('sign', { api: this.apiKey, word: response.data.word, type: 2, count: this.count });
+
+        this.socket.on(`sign response${this.count}`, async (data) => {
+          console.log('nextSign', data);
+          await this.showAnswer(data, response.data.word);
+          // this.nextQuiz();
+
+          this.socket.off(`sign response${this.count}`);
+        });
       }
-
-      this.quizText.setText(response.data.word);
-      this.count = response.data.count;
-      this.start = true;
-
-      this.socket?.emit('sign', { api: this.apiKey, word: response.data.word, type: 2, count: this.count });
-
-      this.socket.on(`sign response${this.count}`, async (data) => {
-        console.log('nextSign', data);
-        await this.showAnswer(data, response.data.word);
-        // this.nextQuiz();
-
-        this.socket.off(`sign response${this.count}`);
-      });
     } catch (error) {
       this.quizText.setText('끝!');
       this.start = false;
@@ -171,29 +198,5 @@ export default class Game extends Phaser.Scene {
     } else {
       this.video.setVisible(false);
     }
-  }
-
-  // timer event
-  async onEvent() {
-    console.log('call back function');
-    const subScore = await this.getScore();
-    if (subScore) {
-      this.score += subScore;
-      this.quiz = '';
-      this.answer = '맞췄습니다.';
-      await this.sleep(1000);
-      this.answer = '';
-    }
-
-    this.showNextQuiz();
-  }
-
-  sleep(delay) {
-    return new Promise((resolve) => setTimeout(resolve, delay));
-  }
-
-  async getScore() {
-    // 맞췄는지 확인하는 함수
-    return 100;
   }
 }
