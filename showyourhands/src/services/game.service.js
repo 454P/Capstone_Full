@@ -19,7 +19,7 @@ async function responseGameStart(api) {
 }
 
 async function responseGameNext(api, count) {
-    if (count >= 5) {
+    if (count >= 3) {
         return {
             status: 201, message: "Game End", word: "null", count: count
         }
