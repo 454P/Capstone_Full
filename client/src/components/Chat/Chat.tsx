@@ -61,6 +61,11 @@ const ChatContainer = styled.div`
   height: 640px;
   background-color: aliceblue;
   padding: 10px 10px 10px 10px;
+
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  z-index: 1;
 `;
 
 const TextContainer = styled.div`
