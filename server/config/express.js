@@ -195,6 +195,7 @@ module.exports = function () {
             }
             delete socketRoom[socket.id];
             console.log("disconnected: ", socket.id);
+            socket.to(roomID).emit("remove other player", { id: socket.id });
             socket.to(roomID).emit("user_exit", { id: socket.id });
         });
     });
