@@ -125,7 +125,7 @@ func modelServer(conn net.Conn, channel chan Word, wordChannel chan Word) {
 
 func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan Word) {
 	for {
-		var i int
+		i := 0
 		var dataBuff []byte
 		var readComplete bool
 		for {
@@ -199,6 +199,7 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 				continue
 			}
 		} else {
+			i += 1
 			fmt.Println("Incorrect")
 			var incorrectJson WebClient
 			if i%5 == 2 {
