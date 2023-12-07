@@ -1,15 +1,11 @@
 import { emitter, scene } from './constants';
 import Phaser from 'phaser';
-import townJson from '@/assets/board/background.json';
 import gameJson from '@/assets/board/game.json';
-import chickenJson from '@/assets/character/chicken.json';
-import chickenImg from '@/assets/character/chicken.png';
-import characterJson from '@/assets/character/sprites.json';
-import characterImg from '@/assets/character/spritesheet.png';
 import flowerImg from '@/assets/objects/Flowers.png';
 import treeImg from '@/assets/objects/Trees.png';
+import rainParticleImg from '@/assets/particles/rain.png';
+import starParticleImg from '@/assets/particles/star.png';
 import fenceImg from '@/assets/tilesets/Fences.png';
-import grassImg from '@/assets/tilesets/Grass.png';
 import grassHillImg from '@/assets/tilesets/Grass_Hill.png';
 import waterImg from '@/assets/tilesets/Water.png';
 
@@ -34,6 +30,9 @@ export default class LoadingGame extends Phaser.Scene {
     this.load.image('tree_tiles', treeImg);
 
     this.load.tilemapTiledJSON('quiz', gameJson);
+    // particles
+    this.load.image('star-particle', starParticleImg);
+    this.load.image('rain-particle', rainParticleImg);
   }
 
   create() {
