@@ -108,7 +108,8 @@ def predict_word(sequence):
 '''
 
 # Actions that we try to detect
-actions = np.array(['나', '너', '많다', '맞다', '모르다', '수고하다', '슬퍼요', '아니요', '안녕하세요', '인사'])
+actions = np.array(['나', '너', '많다', '맞다', '모르다', '수고하다', '슬퍼요', '아니요', '안녕하세요', '인사', '넓다', '사랑', '시간', '아침', '아프다', '오늘', '좋다', '처음', '하루', '행복'])
+
 # Thirty videos worth of data
 no_sequences = 30
 # Videos are going to be 30 frames in length
