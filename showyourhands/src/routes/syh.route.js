@@ -13,7 +13,7 @@ router.post('/game/start', gameController.gameStartRequest);
 router.post('/game/next', gameController.gameNextRequest);
 router.post('/game/end', gameController.gameEndRequest);
 
-router.post('/main/signRequest', mainController.signRequest);
+router.post('/main/userInfo', mainController.userInfoRequest);
 
 router.post('/setting/review', settingController.reviewRequest);
 

@@ -1,9 +1,10 @@
 const mainService = require('../services/main.service');
 
-async function signRequest(req, res, next) {
+
+async function userInfoRequest(req, res, next) {
     try {
         console.log(req.body);
-        const result = await mainService.responseSignRequest(req.body.api, req.body.word);
+        const result = await mainService.responseUserInfo(req.body.api);
         res.status(result.status).json(result);
     } catch (err) {
         console.error('Error on login', err.message);
@@ -12,5 +13,5 @@ async function signRequest(req, res, next) {
 }
 
 module.exports = {
-    signRequest
+    userInfoRequest
 }
