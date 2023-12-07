@@ -102,9 +102,9 @@ export default class Quiz extends Phaser.Scene {
   }
 
   endQuiz() {
-    // emitter.emit('end quiz', this.endScore);
+    emitter.emit('end quiz', this.endScore);
     this.scene.pause();
-    emitter.emit('start review');
+    // emitter.emit('start review');
   }
 
   showAnswer(answer, word) {
