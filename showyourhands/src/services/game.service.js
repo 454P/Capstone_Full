@@ -87,7 +87,8 @@ async function responseGameEnd(api, words) {
                 }
             });
         for (let i = 0; i < words.length; i++) {
-            if (words[i].result === true) {
+            console.log(words[i]);
+            if (words[i].success === true) {
                 user_score += 100;
                 if (review_list[words[i].word]) {
                     review_list[words[i].word].success_count += 1;
@@ -108,7 +109,6 @@ async function responseGameEnd(api, words) {
                 }
             }
         }
-        console.log(review_list);
         const update_query = `
             INSERT INTO capstone.user_sign_stat (user_id, sign_language_id, success_count, fail_count)
             VALUES ($1, $2, $3, $4)
