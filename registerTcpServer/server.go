@@ -114,7 +114,7 @@ func modelServer(conn net.Conn, channel chan Word, wordChannel chan Word) {
 			}
 		}
 		packet := dataBuff
-		fmt.Println("Read from model server: ", string(packet))
+		fmt.Println("Read from model server: ", string(packet), "sending to api: ", wordApi)
 		wordSendingPacket := Word{
 			Api:      wordApi,
 			dataBuff: packet,
@@ -170,7 +170,9 @@ func webClientConnection(conn net.Conn, existingConn net.Conn, wordChannel chan 
 		// wait for word
 		for {
 			wordPacket := <-wordChannel
+			fmt.Println("wordPacket.Api: ", wordPacket.Api, "clientJson.Api: ", clientJson.Api)
 			if wordPacket.Api == clientJson.Api {
+				fmt.Println("breaking loop")
 				word = string(wordPacket.dataBuff)
 				break
 			}
