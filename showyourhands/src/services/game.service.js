@@ -24,7 +24,7 @@ async function responseGameStart(api){
 }
 
 async function responseGameNext(api, count) {
-    if (count >= 5) {
+    if (count >= 2) {
         return {
             status: 201,
             message: "Game End",
@@ -120,12 +120,13 @@ async function responseGameEnd(api, words) {
                     const word_id = await __wordFind(words[i].word);
                     review_list[words[i].word] = {
                         id: word_id,
-                        success: 0,
+                        success_count: 0,
                         fail_count: 1
-                    }
+                    };
                 }
             }
         }
+        console.log(review_list);
         const update_query = `
             INSERT INTO capstone.user_sign_stat (user_id, sign_language_id, success_count, fail_count)
             VALUES ($1, $2, $3, $4)
