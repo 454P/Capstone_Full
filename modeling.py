@@ -144,7 +144,7 @@ if __name__=="__main__":
     end_byte = bytes(end_msg,'utf-8')
     clientSocket.send(bytes(end_msg,'utf-8'))
     received_data = b''
-    model = make_model()
+    model = make_model('cnn')
     while True:
         while True:
             # 데이터를 최대 BUFFER_SIZE만큼 받음
