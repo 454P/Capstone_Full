@@ -76,7 +76,7 @@ export default class Quiz extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive()
       .on('pointerdown', this.endQuiz, this)
-      .setVisible(true);
+      .setVisible(false);
 
     this.incorrects = [];
     this.incorrectsText = this.add
@@ -100,8 +100,9 @@ export default class Quiz extends Phaser.Scene {
   }
 
   endQuiz() {
-    emitter.emit('end quiz', this.endScore);
+    // emitter.emit('end quiz', this.endScore);
     this.scene.pause();
+    emitter.emit('start review');
   }
 
   showAnswer(answer, word) {
