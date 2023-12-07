@@ -23,6 +23,7 @@ const componentStyle = ({
   height,
   margin,
   padding,
+  flex,
 }: Pick<Props, FlexStyleProperties | BoxStyleProperties | PositionStyleProperties>) => {
   return {
     display: 'flex',
@@ -42,6 +43,7 @@ const componentStyle = ({
     height,
     margin,
     padding,
+    flex,
   };
 };
 
