@@ -27,7 +27,7 @@ export default class Particles {
       accelerationY: { random: [10, 15] },
       // lifespan
       lifespan: { min: 3000, max: 3000 },
-      scale: { random: [0.5, 1.25] },
+      scale: { random: [2.0, 3.0] },
       alpha: { random: [0.8, 1.0] },
       gravityY: 20,
       frequency: 1,

@@ -1,18 +1,30 @@
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import gameConfig from '@/game/gameConfig';
 import { emitter } from '@/game/scenes/constants';
 import { socketState } from '@/states';
 import Phaser from 'phaser';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 function GamePage() {
   const ref = useRef<HTMLDivElement>(null);
-  const mySocket = useRecoilValue(socketState);
+  const [mySocket, setMySocket] = useRecoilState(socketState);
+  const navigate = useNavigate();
 
   useEffect(() => {
     emitter.on('init game', () => {
       emitter.emit('send socket info', mySocket);
+    });
+
+    emitter.on('EndGame', (score: number) => {
+      console.log(score);
+      setMySocket((old) => {
+        const newSocket = { ...old, score: score };
+
+        return newSocket;
+      });
+      navigate('/town');
     });
 
     if (!ref.current) return;

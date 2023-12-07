@@ -1,4 +1,4 @@
-import { Game, LoadingGame } from './scenes';
+import { LoadingQuiz, Quiz } from './scenes';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -12,7 +12,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     },
   },
   autoFocus: true,
-  scene: [LoadingGame, Game],
+  scene: [LoadingQuiz, Quiz],
 };
 
 export default gameConfig;

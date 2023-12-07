@@ -36,6 +36,10 @@ export default class Button {
     this.button.setPosition(x, y);
   }
 
+  setVS(flag: boolean) {
+    this.button.setVisible(flag);
+  }
+
   destroy() {
     this.button.destroy();
   }
