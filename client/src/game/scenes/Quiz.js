@@ -61,23 +61,6 @@ export default class Game extends Phaser.Scene {
 
     // button
     this.startButton = new Button(this, width / 2, height / 2, '시작', 90, this.startQuiz);
-    // this.startButton = this.add
-    //   .text(500, 200, 'START', {
-    //     fontFamily: 'MapleStory',
-    //     fontSize: 90,
-    //     fontStyle: 'bold',
-    //   })
-    //   .setInteractive()
-    //   .on('pointerdown', this.startQuiz, this);
-
-    // this.nextButton = this.add
-    //   .text(100, 100, 'NEXT', {
-    //     fontFamily: 'MapleStory',
-    //     fontSize: 20,
-    //     fontStyle: 'bold',
-    //   })
-    //   .setInteractive()
-    //   .on('pointerdown', this.nextQuiz, this);
   }
 
   async startQuiz() {
@@ -133,7 +116,7 @@ export default class Game extends Phaser.Scene {
     this.scoreText.setText('점수: ' + this.score.toString());
 
     if (this.start) {
-      this.startButton.setVisible(false);
+      this.startButton.destroy();
       this.video.setVisible(true);
     } else {
       this.video.setVisible(false);
