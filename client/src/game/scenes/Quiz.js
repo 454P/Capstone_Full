@@ -11,6 +11,7 @@ export default class Quiz extends Phaser.Scene {
     this.score = 0;
     this.start = false;
     this.end = false;
+    this.quizs = ['너', '나', '수고하다', '안녕하세요', '아침'];
   }
 
   init() {
@@ -128,7 +129,7 @@ export default class Quiz extends Phaser.Scene {
     try {
       const response = await axios.post('http://49.142.76.124:8000/game/start', { api: this.apiKey, count: 0 });
       console.log('start', response);
-      this.quizText.setText(response.data.word);
+      this.quizText.setText(this.quizs[0]);
       this.count = response.data.count;
       this.start = true;
 
@@ -171,7 +172,7 @@ export default class Quiz extends Phaser.Scene {
         this.endScore = response2.data.score;
         this.closeButton.setVisible(true);
       } else {
-        this.quizText.setText(response.data.word);
+        this.quizText.setText(this.quizs[this.count]);
         this.count = response.data.count;
         this.start = true;
 
