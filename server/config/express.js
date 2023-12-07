@@ -8,7 +8,7 @@ module.exports = function () {
     const server = require("http").Server(app);
     const io = require("socket.io")(server, {
         cors: {
-            origin: "http://49.142.76.124:4549",
+            origin: "*",
             methods: ["GET", "POST"],
             credentials: true,
         },
