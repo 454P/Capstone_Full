@@ -35,7 +35,7 @@ async function responseReview(api) {
         });
     // sort words by fail_count - success_count
     // if same, sort by lesser success_count
-    words.sort((a, b) => {
+    words.sort((b, a) => {
         if (a.fail_count - a.success_count === b.fail_count - b.success_count) {
             return a.success_count - b.success_count;
         } else {
