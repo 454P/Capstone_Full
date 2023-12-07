@@ -76,8 +76,8 @@ export default class Quiz extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive()
       .on('pointerdown', this.endQuiz, this)
-      .on('pointerover', () => this.button.setStyle({ fill: '#f39c12' }))
-      .on('pointerout', () => this.button.setStyle({ fill: '#000000' }))
+      .on('pointerover', () => this.closeButton.setStyle({ fill: '#f39c12' }))
+      .on('pointerout', () => this.closeButton.setStyle({ fill: '#000000' }))
       .setVisible(false);
 
     this.incorrects = [];
