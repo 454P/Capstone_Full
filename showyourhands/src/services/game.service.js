@@ -1,22 +1,17 @@
 const connection = require('../config/db.config');
-async function responseGameStart(api){
+
+async function responseGameStart(api) {
     let result = null;
 
     try {
         const word = await __wordFetch();
         result = {
-            status: 200,
-            message: "gameStart success",
-            word: word.sign_language_word,
-            count: 1
+            status: 200, message: "gameStart success", word: word.sign_language_word, count: 1
         }
     } catch (err) {
         console.error('Error on gameStart', err.message);
         result = {
-            status: 400,
-            message: "gameStart failed",
-            word: "null",
-            count: 999
+            status: 400, message: "gameStart failed", word: "null", count: 999
         }
         return result;
     }
@@ -26,10 +21,7 @@ async function responseGameStart(api){
 async function responseGameNext(api, count) {
     if (count >= 5) {
         return {
-            status: 201,
-            message: "Game End",
-            word: "null",
-            count: count
+            status: 201, message: "Game End", word: "null", count: count
         }
     }
     let result = null;
@@ -37,18 +29,12 @@ async function responseGameNext(api, count) {
     try {
         const word = await __wordFetch();
         result = {
-            status: 200,
-            message: "gameNext success",
-            word: word.sign_language_word,
-            count: count + 1
+            status: 200, message: "gameNext success", word: word.sign_language_word, count: count + 1
         }
     } catch (err) {
         console.error('Error on gameStart', err.message);
         result = {
-            status: 400,
-            message: "gameNext failed",
-            word: "null",
-            count: 999
+            status: 400, message: "gameNext failed", word: "null", count: 999
         }
         return result;
     }
@@ -58,21 +44,22 @@ async function responseGameNext(api, count) {
 async function responseGameEnd(api, words) {
     let result = null;
     let user_id = null;
+    let user_score = 0;
     try {
-         const query = `
-            SELECT user_id 
+        const query = `
+            SELECT user_id, user_score
             FROM capstone."user" 
             WHERE user_api_key = $1;
          `;
         await connection.query(query, [api])
             .then(r => {
                 user_id = r.rows[0].user_id;
+                user_score = r.rows[0].user_score;
             })
             .catch(e => {
                 console.log(e);
                 result = {
-                    status: 400,
-                    message: "User does not exist"
+                    status: 400, message: "User does not exist"
                 }
             });
         const review_list_query = `
@@ -82,7 +69,6 @@ async function responseGameEnd(api, words) {
             WHERE user_id = $1;
         `
         let review_list = {};
-
         await connection.query(review_list_query, [user_id])
             .then(r => {
                 // save sign_language_word, id, success_count, fail_count at review_list
@@ -97,31 +83,27 @@ async function responseGameEnd(api, words) {
             .catch(e => {
                 console.log(e);
                 result = {
-                    status: 400,
-                    message: "error on server while parsing review list"
+                    status: 400, message: "error on server while parsing review list"
                 }
             });
-        for(let i = 0; i < words.length; i++) {
+        for (let i = 0; i < words.length; i++) {
             if (words[i].result === true) {
-                if(review_list[words[i].word]) {
+                user_score += 100;
+                if (review_list[words[i].word]) {
                     review_list[words[i].word].success_count += 1;
                 } else {
                     const word_id = await __wordFind(words[i].word);
                     review_list[words[i].word] = {
-                        id: word_id,
-                        success_count: 1,
-                        fail_count: 0
+                        id: word_id, success_count: 1, fail_count: 0
                     }
                 }
             } else {
-                if(review_list[words[i].word]) {
+                if (review_list[words[i].word]) {
                     review_list[words[i].word].fail_count += 1;
                 } else {
                     const word_id = await __wordFind(words[i].word);
                     review_list[words[i].word] = {
-                        id: word_id,
-                        success_count: 0,
-                        fail_count: 1
+                        id: word_id, success_count: 0, fail_count: 1
                     };
                 }
             }
@@ -142,21 +124,34 @@ async function responseGameEnd(api, words) {
                 .catch(e => {
                     console.log(e);
                     result = {
-                        status: 400,
-                        message: "error on server while updating review list"
+                        status: 400, message: "error on server while updating review list"
                     }
                 });
 
         }
+        const update_score_query = `
+            UPDATE capstone."user"
+            SET user_score = $1
+            WHERE user_id = $2;
+        `;
+        await connection.query(update_score_query, [user_score, user_id])
+            .then(r => {
+                console.log(r);
+            })
+            .catch(e => {
+                console.log(e);
+                result = {
+                    status: 400, message: "error on server while updating user score"
+                }
+            });
+
         result = {
-            status: 200,
-            message: "gameEnd success"
+            status: 200, message: "gameEnd success", score: user_score
         }
     } catch (err) {
         console.error('Error on gameEnd', err.message);
         result = {
-            status: 400,
-            message: "gameEnd failed"
+            status: 400, message: "gameEnd failed"
         }
         return result;
     }
@@ -197,7 +192,5 @@ async function __wordFind(word) {
 }
 
 module.exports = {
-    responseGameStart,
-    responseGameNext,
-    responseGameEnd
+    responseGameStart, responseGameNext, responseGameEnd
 }
