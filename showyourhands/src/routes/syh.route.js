@@ -15,6 +15,6 @@ router.post('/game/end', gameController.gameEndRequest);
 
 router.post('/main/signRequest', mainController.signRequest);
 
-// router.post('/setting/review', settingController.reviewRequest);
+router.post('/setting/review', settingController.reviewRequest);
 
 module.exports = router;
