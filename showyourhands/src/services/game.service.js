@@ -137,7 +137,7 @@ async function responseGameEnd(api, words) {
         for (let key in query_word_list) {
             await connection.query(update_query, [user_id, query_word_list[key].id, query_word_list[key].success_count, query_word_list[key].fail_count])
                 .then(r => {
-                    console.log(r);
+                    console.log(user_id, query_word_list[key].id, query_word_list[key].success_count, query_word_list[key].fail_count);
                 })
                 .catch(e => {
                     console.log(e);
