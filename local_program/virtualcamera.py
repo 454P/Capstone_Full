@@ -11,7 +11,7 @@ class keypointDetector():
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_face_mesh = mp.solutions.face_mesh
 
-    def mediapipe_detection(image, model):
+    def mediapipe_detection(self, image, model):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
         image.flags.writeable = False  # 이미지 수정 불가
         results = model.process(image)  # 모델을 사용해 입력 이미지에 대한 예측 수행
@@ -19,7 +19,7 @@ class keypointDetector():
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # COLOR COVERSION RGB 2 BGR
         return image, results
 
-    def extract_keypoints(results):
+    def extract_keypoints(self, results):
         pose = np.array([[res.x, res.y, res.z, res.visibility] for res in
                         results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33 * 4)
         lh = np.array([[res.x, res.y, res.z] for res in
