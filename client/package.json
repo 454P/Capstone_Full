@@ -32,7 +32,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "export PORT=4549 && IMAGE_INLINE_SIZE_LIMIT=0 craco start",
+    "start": "export PORT=8080 && IMAGE_INLINE_SIZE_LIMIT=0 craco start",
     "build": "IMAGE_INLINE_SIZE_LIMIT=0 craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

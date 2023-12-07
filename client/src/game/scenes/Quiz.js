@@ -1,4 +1,6 @@
+import { waitFor } from '@testing-library/react';
 import Button from '../objects/Button';
+import Particles from '../objects/Particles';
 import { emitter, scene } from './constants';
 import axios from 'axios';
 import Phaser from 'phaser';
@@ -61,6 +63,30 @@ export default class Game extends Phaser.Scene {
 
     // button
     this.startButton = new Button(this, width / 2, height / 2, '시작', 90, this.startQuiz);
+
+    // particles
+    this.rainParticles = new Particles({ scene: this, type: 'rain' });
+    this.starParticles = new Particles({ scene: this, type: 'star' });
+
+    // 오답 체크
+    // {word:xxx, success:true}
+    this.words = [];
+  }
+
+  showAnswer(answer, word) {
+    if (answer === 1) {
+      this.quizText.setText('맞았습니다.');
+      this.starParticles.play();
+      this.words.push({ word: word, success: true });
+    } else {
+      this.quizText.setText('틀렸습니다.');
+      this.rainParticles.play();
+      this.words.push({ word: word, success: false });
+    }
+
+    setTimeout(() => {
+      this.nextQuiz();
+    }, 4000);
   }
 
   async startQuiz() {
@@ -73,11 +99,18 @@ export default class Game extends Phaser.Scene {
 
       this.socket?.emit('sign', { api: this.apiKey, word: response.data.word, type: 2, count: this.count });
 
-      this.socket.on('sign response1', (data) => {
+      this.socket.on('sign response1', async (data) => {
         console.log('startSign', data);
         this.start = false;
-        if (data === 1) this.score += 100;
-        this.nextQuiz();
+        await this.showAnswer(data, response.data.word);
+        // this.nextQuiz();
+        // if (data === 1) {
+        //   this.score += 100;
+        //   this.starParticles.play();
+        // } else {
+        //   this.rainParticles.play();
+        // }
+        // this.nextQuiz();
       });
     } catch (error) {
       console.log(error);
@@ -89,20 +122,37 @@ export default class Game extends Phaser.Scene {
       console.log('count:', this.count);
       const response = await axios.post('http://49.142.76.124:8000/game/next', { api: this.apiKey, count: this.count });
       console.log('next', response);
+
+      // 끝났을 떄
+      if (response.data.status === 201) {
+        let incorrects = '끝!\n';
+        this.words.forEach((problem) => {
+          if (problem.success === false) incorrects += problem.word + '\n';
+        });
+        this.quizText.setText(incorrects);
+        this.start = false;
+        //
+        const response = await axios.post('http://49.142.76.124:8000/game/end', {
+          api: this.apiKey,
+          words: this.words,
+        });
+        console.log(this.words);
+
+        console.log('End', response);
+        return;
+      }
+
       this.quizText.setText(response.data.word);
       this.count = response.data.count;
       this.start = true;
 
       this.socket?.emit('sign', { api: this.apiKey, word: response.data.word, type: 2, count: this.count });
 
-      this.socket.on(`sign response${this.count}`, (data) => {
+      this.socket.on(`sign response${this.count}`, async (data) => {
         console.log('nextSign', data);
-        this.start = false;
-        if (data === 1) {
-          this.score += 100;
-          console.log(this.score);
-        }
-        this.nextQuiz();
+        await this.showAnswer(data, response.data.word);
+        // this.nextQuiz();
+
         this.socket.off(`sign response${this.count}`);
       });
     } catch (error) {

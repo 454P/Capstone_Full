@@ -159,7 +159,7 @@ module.exports = function () {
 
             var options = {
                 // 접속 정보 설정
-                port: 8080,
+                port: "4549",
                 host: "49.142.76.124",
             };
 
