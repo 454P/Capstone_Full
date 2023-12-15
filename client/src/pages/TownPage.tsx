@@ -66,7 +66,6 @@ function TownPage() {
     return () => {
       console.log('destroy');
       mySocket.socket.emit('user_exit');
-      mySocket.socket.disconnect();
       emitter.removeAllListeners();
       game.destroy(true);
     };

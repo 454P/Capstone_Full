@@ -1,8 +1,7 @@
 import { scene } from './constants';
 import Phaser from 'phaser';
-import townJson from '@/assets/board/background.json';
+import backgroundJson from '@/assets/board/background.json';
 import gameJson from '@/assets/board/game.json';
-import tmpJson from '@/assets/board/tmp.json';
 import chickenJson from '@/assets/character/chicken.json';
 import chickenImg from '@/assets/character/chicken.png';
 import characterJson from '@/assets/character/sprites.json';
@@ -43,9 +42,8 @@ export default class Loading extends Phaser.Scene {
     this.load.atlas('chicken', chickenImg, chickenJson);
 
     //board
-    this.load.tilemapTiledJSON('map', townJson);
     this.load.tilemapTiledJSON('quiz', gameJson);
-    this.load.tilemapTiledJSON('tmp', tmpJson);
+    this.load.tilemapTiledJSON('background', backgroundJson);
 
     // particles
     this.load.image('star-particle', starParticleImg);
