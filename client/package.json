@@ -1,0 +1,61 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^20.8.4",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/recoil": "^0.0.9",
+    "@types/socket.io-client": "^3.0.0",
+    "axios": "^1.6.2",
+    "phaser": "3.55.0",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.16.0",
+    "react-scripts": "5.0.1",
+    "recoil": "^0.7.7",
+    "socket.io-client": "^4.7.2",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "typescript": "^4.4.2",
+    "web-vitals": "^2.1.0"
+  },
+  "scripts": {
+    "start": "export PORT=8080 && IMAGE_INLINE_SIZE_LIMIT=0 craco start",
+    "build": "IMAGE_INLINE_SIZE_LIMIT=0 craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0"
+  }
+}

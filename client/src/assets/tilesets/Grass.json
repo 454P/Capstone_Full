@@ -1,0 +1,15 @@
+{
+    "columns": 10,
+    "image": "../../../../../assets/Tilesets/ground tiles/Old tiles/Grass.png",
+    "imageheight": 128,
+    "imagewidth": 160,
+    "margin": 0,
+    "name": "Grass",
+    "spacing": 0,
+    "tilecount": 80,
+    "tiledversion": "1.10.2",
+    "tileheight": 16,
+    "tilewidth": 16,
+    "type": "tileset",
+    "version": "1.10"
+}
