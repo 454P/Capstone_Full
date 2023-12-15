@@ -1,0 +1,438 @@
+openapi: 3.0.0
+info:
+  title: Simple Inventory API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://virtserver.swaggerhub.com/KZRT0123_1/showyourhands/1.0.0
+    description: SwaggerHub API Auto Mocking
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /login:
+    get:
+      tags:
+        - front
+      summary: shows login page
+      description: shows login page
+      operationId: getLoginPage
+      responses:
+        "200":
+          description: login page updated
+        "400":
+          description: cannot load login page
+      x-swagger-router-controller: Front
+    post:
+      tags:
+        - query
+      summary: login attempt
+      description: check id and password
+      operationId: loginRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginProfile'
+        description: login profile
+        required: true
+      responses:
+        "201":
+          description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginToken'
+        "400":
+          description: server dead
+        "401":
+          description: login failed
+      x-swagger-router-controller: Query
+  /signup:
+    get:
+      tags:
+        - front
+      summary: shows signup page
+      description: shows signup page
+      operationId: getSignupPage
+      responses:
+        "200":
+          description: Signup page updated
+        "400":
+          description: cannot load Signup page
+      x-swagger-router-controller: Front
+    post:
+      tags:
+        - query
+      summary: signup attempt
+      description: insert id pw in db
+      operationId: signupRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupProfile'
+        description: signup profile
+        required: true
+      responses:
+        "201":
+          description: item created, return to login screen
+        "400":
+          description: server dead
+        "401":
+          description: signup failed
+      x-swagger-router-controller: Query
+  /game/start:
+    get:
+      tags:
+        - query
+      summary: fetch one word
+      description: fetch one word, return count
+      operationId: gameStartRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientSideToken'
+        description: client side token
+        required: true
+      responses:
+        "200":
+          description: word fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameWord'
+        "400":
+          description: game start failed
+        "401":
+          description: game ended
+      x-swagger-router-controller: Query
+  /game/next:
+    get:
+      tags:
+        - query
+      summary: fetch next word
+      description: fetch one word, return count. if count > X return 401
+      operationId: gameStartRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientSideToken'
+        description: client side token
+        required: true
+      responses:
+        "200":
+          description: word fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameWord'
+        "400":
+          description: game start failed
+        "201":
+          description: game ended
+      x-swagger-router-controller: Query
+  /game:
+    get:
+      tags:
+        - front
+      summary: shows game page
+      description: shows game page
+      operationId: getGamePage
+      responses:
+        "200":
+          description: game page updated
+        "400":
+          description: cannot load game page
+    x-swagger-router-controller: Front
+
+  /game/end:
+    post:
+      tags:
+        - query
+      summary: end game
+      description: end game, return score, update db with new score and update review table with matching success / fail. Needs array of word and success/fail
+      operationId: gameEndRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameEndProfile'
+        description: client side token
+        required: true
+      responses:
+        "200":
+          description: game ended
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserScoreProfile'
+        "400":
+          description: game end failed
+      x-swagger-router-controller: Query
+
+  /main/userInfo:
+    post:
+      tags:
+        - query
+      summary: get user info
+      description: get user info, return score
+      operationId: getUserInfoRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiToken'
+        description: api token
+        required: true
+      responses:
+        "200":
+          description: user info fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoProfile'
+        "400":
+          description: user info fetch failed
+      x-swagger-router-controller: Query
+
+  /setting/review:
+    post:
+      tags:
+        - query
+      summary: get review list
+      description: get review list, return list of word and success/fail
+      operationId: getReviewListRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiToken'
+        description: api token
+        required: true
+      responses:
+        "200":
+          description: review list fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewProfile'
+        "400":
+          description: review list fetch failed
+      x-swagger-router-controller: Query
+
+components:
+  schemas:
+    SignupProfile:
+      required:
+        - email
+        - id
+        - nickname
+        - password
+      type: object
+      properties:
+        id:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123
+        password:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123!
+        nickname:
+          type: string
+          format: VARCHAR(20)
+          example: asap
+        email:
+          type: string
+          format: "VARCHAR(255), !do not check at the backend!"
+          example: asap@asap.com
+
+    LoginProfile:
+      required:
+        - id
+        - password
+      type: object
+      properties:
+        id:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123
+        password:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123!
+
+    LoginToken:
+      required:
+        - nickname
+        - token
+      type: object
+      properties:
+        nickname:
+          type: string
+          format: VARCHAR(20)
+          example: asap
+        token:
+          type: string
+          format: JWT
+          example: arstarst
+
+    ClientSideToken:
+      required:
+        - api
+        - count
+      type: object
+      properties:
+        api:
+          type: string
+          format: VARCHAR(128)
+          example: arstarst
+        count:
+          type: integer
+          format: INT
+          example: 0
+
+    ApiToken:
+      required:
+        - api
+      type: object
+      properties:
+        api:
+          type: string
+          format: VARCHAR(128)
+          example: arstarst
+
+    WordSuccessFailToken:
+      required:
+        - word
+        - success
+      type: object
+      properties:
+        word:
+          type: string
+          format: VARCHAR(255)
+          example: 인사
+        success:
+          type: boolean
+          format: BOOLEAN
+          example: true
+
+    GameEndProfile:
+      required:
+        - api
+        - words
+      type: object
+      properties:
+        api:
+          type: string
+          format: VARCHAR(128)
+          example: arstarst
+        words:
+          type: array
+          items: WordSuccessFailToken
+          $ref: '#/components/schemas/WordSuccessFailToken'
+
+    GameWord:
+      required:
+        - word
+        - count
+      type: object
+      properties:
+        word:
+          type: string
+          format: VARCHAR(255)
+          example: 인사
+        count:
+          type: integer
+          format: INT
+          example: 0
+
+    UserScoreProfile:
+      required:
+        - score
+      type: object
+      properties:
+        score:
+          type: integer
+          format: INT
+          example: 0
+
+    UserInfoProfile:
+      required:
+        - id
+        - score
+        - name
+        - email
+        - created_at
+      type: object
+      properties:
+        id:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123
+        score:
+          type: integer
+          format: INT
+          example: 0
+        name:
+          type: string
+          format: VARCHAR(20)
+          example: asap
+        email:
+          type: string
+          format: VARCHAR(255)
+          example: asap0123@asap.com
+        created_at:
+          type: string
+          format: DATETIME
+          example: 2021-01-01 00:00:00
+
+
+    #    word: r.rows[i].sign_language_word,
+    #      success_count: r.rows[i].success_count,
+    #      fail_count: r.rows[i].fail_count,
+    #      image_path: r.rows[i].image_path
+    WordReviewProfile:
+      required:
+        - word
+        - success_count
+        - fail_count
+        - image_path
+      type: object
+      properties:
+        word:
+          type: string
+          format: VARCHAR(255)
+          example: 인사
+        success_count:
+          type: integer
+          format: INT
+          example: 0
+        fail_count:
+          type: integer
+          format: INT
+          example: 0
+        image_path:
+          type: string
+          format: VARCHAR(255)
+          example: /video/인사.mp4
+
+    ReviewProfile:
+      required:
+        - words
+      type: object
+      properties:
+        words:
+          type: array
+          items: WordReviewProfile
+          $ref: '#/components/schemas/WordReviewProfile'
