@@ -1,5 +1,4 @@
-import { emitter } from '../scenes/constants';
-import type { PlayerInfo, actionType } from './constants';
+import type { actionType } from './constants';
 import { Socket } from 'socket.io-client';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
