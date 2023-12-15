@@ -11,7 +11,6 @@ export default class Quiz extends Phaser.Scene {
     this.score = 0;
     this.start = false;
     this.end = false;
-    this.quizs = ['너', '나', '수고하다', '안녕하세요', '아침'];
   }
 
   init() {
@@ -129,7 +128,7 @@ export default class Quiz extends Phaser.Scene {
     try {
       const response = await axios.post('http://49.142.76.124:8000/game/start', { api: this.apiKey, count: 0 });
       console.log('start', response);
-      this.quizText.setText(this.quizs[0]);
+      this.quizText.setText(response.data.word);
       this.count = response.data.count;
       this.start = true;
 
@@ -138,7 +137,7 @@ export default class Quiz extends Phaser.Scene {
       this.socket.on('sign response1', async (data) => {
         console.log(data);
         console.log('startSign', data);
-        await this.showAnswer(data, this.quizs[this.count - 1]);
+        await this.showAnswer(data, response.data.word);
       });
     } catch (error) {
       console.log(error);
@@ -172,7 +171,7 @@ export default class Quiz extends Phaser.Scene {
         this.endScore = response2.data.score;
         this.closeButton.setVisible(true);
       } else {
-        this.quizText.setText(this.quizs[this.count]);
+        this.quizText.setText(response.data.word);
         this.count = response.data.count;
         this.start = true;
 
@@ -180,9 +179,7 @@ export default class Quiz extends Phaser.Scene {
 
         this.socket.on(`sign response${this.count}`, async (data) => {
           console.log('nextSign', data);
-          await this.showAnswer(data, this.quizs[this.count - 1]);
-          // this.nextQuiz();
-
+          await this.showAnswer(data, response.data.word);
           this.socket.off(`sign response${this.count}`);
         });
       }
