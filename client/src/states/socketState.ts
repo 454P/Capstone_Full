@@ -13,7 +13,7 @@ export const socketState = atom<customSocket>({
   key: 'socketState',
   default: {
     nickname: `${String(Math.floor(Math.random() * 1000))}`,
-    socket: io('http://49.142.76.124:45491'),
+    socket: io('http://localhost:45491'),
     isReady: false,
     apiKey: '',
     score: 0,
