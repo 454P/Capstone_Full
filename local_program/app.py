@@ -6,9 +6,9 @@ import argparse
 import requests
 from socket import *
 
-url = 'http://49.142.76.124:8000/login'
+url = 'http://localhost:8000/login'
 datas = {'id': 'asap0123', 'password': 'asap0123!'}
-HOST = "49.142.76.124"
+HOST = "localhost"
 TCP_PORT = 4549
 
 detector = vc.keypointDetector()

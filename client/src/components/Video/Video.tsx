@@ -73,7 +73,7 @@ const Video = () => {
   };
 
   useEffect(() => {
-    socketRef.current = io('http://49.142.76.124:45491');
+    socketRef.current = io('http://localhost:45491');
     socketRef.current.on('all_users', (others: Array<{ id: string }>) => {
       if (others.length > 0) createOffer();
     });

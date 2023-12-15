@@ -15,7 +15,7 @@ from socket import *
 import requests
 import tensorflow as tf
 datas = {'id': 'asap0123', 'password': 'asap0123!'}
-HOST = "49.142.76.124"
+HOST = "localhost"
 TCP_PORT = 4549
 
 mp_holistic = mp.solutions.holistic

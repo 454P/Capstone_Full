@@ -31,7 +31,7 @@ function ReviewPage() {
 
   async function getData() {
     try {
-      const response = await axios.post('http://49.142.76.124:8000/setting/review', {
+      const response = await axios.post('http://localhost:8000/setting/review', {
         api: mySocket.apiKey,
       });
       console.log(response);
@@ -49,13 +49,13 @@ function ReviewPage() {
 
   if (!data) return <div></div>;
   console.log(idx);
-  console.log('http://49.142.76.124:8000' + data[idx].image_path);
+  console.log('http://localhost:8000' + data[idx].image_path);
   return (
     <ReviewContainer>
       <Typography color='white0' font='Bold76'>
         {data[idx].word}
       </Typography>
-      <Video muted autoPlay src={'http://49.142.76.124:8000' + data[idx].image_path} />
+      <Video muted autoPlay src={'http://localhost:8000' + data[idx].image_path} />
 
       <Flex flexDirection='row'>
         {idx && (

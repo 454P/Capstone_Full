@@ -39,7 +39,7 @@ function LoginPage() {
 
   async function login() {
     try {
-      const response = await axios.post('http://49.142.76.124:8000/login', {
+      const response = await axios.post('http://localhost:8000/login', {
         id: id,
         password: password,
       });

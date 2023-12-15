@@ -127,7 +127,7 @@ export default class Quiz extends Phaser.Scene {
 
   async startQuiz() {
     try {
-      const response = await axios.post('http://49.142.76.124:8000/game/start', { api: this.apiKey, count: 0 });
+      const response = await axios.post('http://localhost:8000/game/start', { api: this.apiKey, count: 0 });
       console.log('start', response);
       this.quizText.setText(this.quizs[0]);
       this.count = response.data.count;
@@ -148,7 +148,7 @@ export default class Quiz extends Phaser.Scene {
   async nextQuiz() {
     try {
       console.log('count:', this.count);
-      const response = await axios.post('http://49.142.76.124:8000/game/next', { api: this.apiKey, count: this.count });
+      const response = await axios.post('http://localhost:8000/game/next', { api: this.apiKey, count: this.count });
       console.log('next', response);
 
       // 끝났을 떄
@@ -163,7 +163,7 @@ export default class Quiz extends Phaser.Scene {
         this.start = false;
         this.end = true;
 
-        const response2 = await axios.post('http://49.142.76.124:8000/game/end', {
+        const response2 = await axios.post('http://localhost:8000/game/end', {
           api: this.apiKey,
           words: this.words,
         });

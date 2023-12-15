@@ -38,7 +38,7 @@ function RegisterPage() {
 
   async function register() {
     try {
-      await axios.post('http://49.142.76.124:8000/signup', {
+      await axios.post('http://localhost:8000/signup', {
         id: id,
         password: password,
         nickname: nickName,

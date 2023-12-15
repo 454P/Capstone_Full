@@ -2,9 +2,9 @@ import json
 from socket import *
 import requests
 
-url = 'http://49.142.76.124:8000/login'
+url = 'http://localhost:8000/login'
 datas = {'id': 'asap0123', 'password': 'asap0123!'}
-HOST = "49.142.76.124"
+HOST = "localhost"
 TCP_PORT = 8080
 
 def get_key():
