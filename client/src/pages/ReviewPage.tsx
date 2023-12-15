@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { emitter } from '@/game/scenes/constants';
 import { socketState } from '@/states';
 import axios, { AxiosError } from 'axios';
 import { useRecoilValue } from 'recoil';
@@ -43,6 +44,10 @@ function ReviewPage() {
   }
 
   useEffect(() => {
+    // emitter.on('start review', () => {
+    //   console.log('start review');
+    // });
+
     console.log(mySocket);
     getData();
   }, []);

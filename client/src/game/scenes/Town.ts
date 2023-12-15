@@ -47,12 +47,6 @@ export default class Town extends Phaser.Scene {
   }
 
   init() {
-    console.log(localStorage.getItem('apiKey'), this.socket);
-    const apik = localStorage.getItem('apiKey');
-    // if (!apik) {
-    //   this.socketConnection();
-    // }
-
     if (!this.socket) {
       emitter.on('initPlayer', (mySocket: customSocket) => {
         console.log('initPlayer', mySocket);
@@ -70,7 +64,7 @@ export default class Town extends Phaser.Scene {
 
   create() {
     // background
-    const map = this.make.tilemap({ key: 'tmp' });
+    const map = this.make.tilemap({ key: 'background' });
 
     const fences = map.addTilesetImage('Fences', 'fence_tiles');
     const flowers = map.addTilesetImage('Flowers', 'flower_tiles');
@@ -196,21 +190,6 @@ export default class Town extends Phaser.Scene {
     setTimeout(() => {
       this.closeConversation();
     }, 8000);
-    // this.socket?.emit('sign', { api: this.apiKey, word: '안녕하세요', type: 2, count: 1 });
-    // this.socket?.on('sign response1', (data: number) => {
-    //   console.log(data);
-    //   if (data) {
-    //     this.interaction?.setText('맞았습니다.');
-    //     this.starParticles?.play();
-    //   } else {
-    //     this.interaction?.setText('틀렸습니다.');
-    //     this.rainParticles?.play();
-    //   }
-
-    //   setTimeout(() => {
-    //     this.closeConversation([]);
-    //   }, 5000);
-    // });
   }
 
   update() {

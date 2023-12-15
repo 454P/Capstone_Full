@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { GamePage, HomePage, LoginPage, RegisterPage, ReviewPage, TownPage } from './pages';
+import { HomePage, LoginPage, RegisterPage, ReviewPage, TownPage } from './pages';
 
 function App() {
   return (
@@ -9,7 +9,6 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
-          <Route path='/game' element={<GamePage />} />
           <Route path='/town' element={<TownPage />} />
           <Route path='/review' element={<ReviewPage />} />
         </Routes>
