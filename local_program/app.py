@@ -12,7 +12,7 @@ HOST = "localhost"
 TCP_PORT = 4549
 
 detector = vc.keypointDetector()
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 def record_video():
     pTime = 0
@@ -43,9 +43,8 @@ def record_video():
     
     for img in images:
         result, _ = detector.get_keypoint(img)
-        print(f"result: {result}")
         sequence.append(result.tolist())
-    print(len(sequence))
+    # print(len(sequence))
     return json.dumps(sequence[-30:])
 
 def get_key():
